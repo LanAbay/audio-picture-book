@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>mnanak na qalang · 泰雅奇幻之旅 | Audio Picture Book</title>
+  <style>
+    :root {
+      --primary-red: #c52928;
+      --atayal-sand: #f7eee1;
+      --gold-accent: #f5b025;
+      --bg-dark: #120f11;
+      --card-bg: rgba(26, 21, 23, 0.94);
+      --rhombus-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .tribal-rhombus-bar {
+      height: 14px;
+      width: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        #b72322 0px,
+        #b72322 14px,
+        #ffffff 14px,
+        #ffffff 18px,
+        #1c1618 18px,
+        #1c1618 32px,
+        #d19e34 32px,
+        #d19e34 36px
+      );
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.85);
+      z-index: 30;
+      flex-shrink: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 20px;
+      background: rgba(20, 16, 18, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 25;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid var(--gold-accent);
+      padding: 2px;
+      object-fit: contain;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .avatar-icon:hover { transform: scale(1.1) rotate(5deg); }
+
+    .title-group h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #ffd875;
+    }
+    .title-group p {
+      font-size: 0.75rem;
+      color: #b5a698;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 18px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: var(--primary-red);
+      border-color: var(--primary-red);
+      transform: translateY(-1px);
+    }
+    .btn-action.active {
+      background: var(--gold-accent);
+      color: #1a1617;
+      font-weight: 700;
+      border-color: var(--gold-accent);
+    }
+
+    main#readerStage {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 10px 16px;
+    }
+
+    .book-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 980px;
+      height: 100%;
+      max-height: 640px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.97) translateX(30px);
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      pointer-events: none;
+    }
+
+    .page-slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateX(0);
+      pointer-events: auto;
+    }
+
+    .illustration-frame {
+      position: relative;
+      width: 100%;
+      height: 75%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--rhombus-shadow);
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .illustration-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #080708;
+    }
+
+    .caption-card {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 18px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-height: 125px;
+      overflow-y: auto;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .txt-atayal {
+      font-size: 0.96rem;
+      color: #ffe082;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .txt-chinese {
+      font-size: 0.92rem;
+      color: #f1f1f1;
+      line-height: 1.35;
+    }
+    .txt-english {
+      font-size: 0.8rem;
+      color: #aba298;
+      line-height: 1.25;
+    }
+
+    .arrow-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(18, 14, 16, 0.5);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+    .arrow-btn:hover {
+      background: rgba(197, 41, 40, 0.85);
+      border-color: #ffd875;
+      transform: translateY(-50%) scale(1.12);
+      box-shadow: 0 0 18px rgba(197, 41, 40, 0.7);
+    }
+    .arrow-btn:active { transform: translateY(-50%) scale(0.95); }
+    .arrow-btn img {
+      width: 32px;
+      height: auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    }
+    .arrow-left { left: 16px; }
+    .arrow-right { right: 16px; }
+
+    footer {
+      background: rgba(16, 13, 14, 0.95);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 25;
+      flex-shrink: 0;
+    }
+
+    .audio-dock {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .sound-pod {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sound-pod-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-red);
+      color: white;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .sound-pod-btn:hover { transform: scale(1.1); }
+
+    .pod-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #e0d5c8;
+      letter-spacing: 0.5px;
+    }
+
+    .volume-bar {
+      width: 60px;
+      height: 4px;
+      accent-color: var(--gold-accent);
+      cursor: pointer;
+    }
+
+    .page-tag {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffd875;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .drawer-overlay {
+      position: absolute;
+      bottom: 56px;
+      left: 0;
+      width: 100%;
+      background: rgba(14, 11, 12, 0.97);
+      border-top: 2px solid var(--primary-red);
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      z-index: 40;
+      transform: translateY(115%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      box-shadow: 0 -12px 30px rgba(0,0,0,0.8);
+    }
+    .drawer-overlay.open { transform: translateY(0); }
+
+    .thumb-node {
+      flex: 0 0 92px;
+      height: 64px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      opacity: 0.65;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .thumb-node:hover, .thumb-node.active {
+      opacity: 1;
+      border-color: var(--gold-accent);
+      transform: scale(1.06);
+    }
+    .thumb-node img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-node span {
+      position: absolute;
+      bottom: 2px;
+      right: 3px;
+      font-size: 0.65rem;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    #startBackdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 9, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .start-dialog {
+      background: linear-gradient(145deg, #231c1e, #141112);
+      border: 2px solid #8e2b29;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+    }
+    .start-dialog h2 {
+      color: #ffd875;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+    .start-dialog p {
+      font-size: 0.9rem;
+      color: #ded1c4;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .btn-begin {
+      background: var(--primary-red);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 12px 34px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(197, 41, 40, 0.55);
+      transition: all 0.2s ease;
+    }
+    .btn-begin:hover {
+      background: #df3130;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .title-group h1 { font-size: 1rem; }
+      .title-group p { display: none; }
+      .arrow-btn { width: 44px; height: 44px; }
+      .arrow-btn img { width: 22px; }
+      .illustration-frame { height: 65%; }
+      .caption-card { max-height: 110px; font-size: 0.82rem; }
+      .sound-pod { padding: 3px 6px; }
+      .volume-bar { width: 45px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tribal-rhombus-bar"></div>
+
+  <header>
+    <div class="header-left">
+      <img src="images/girl_avatar.png" id="avatarImg" class="avatar-icon" alt="Avatar" title="Watan & Masked Girl" />
+      <div class="title-group">
+        <h1>mnanak na qalang</h1>
+        <p>泰雅奇幻之旅 · Atayal Interactive Audio Picture Book</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-action" id="btnThumbnails" title="切換目錄">
+        <span>📑 目錄</span>
+      </button>
+      <button class="btn-action" id="btnFullscreen" title="全螢幕切換">
+        <span>⛶ 全螢幕</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="readerStage">
+    <button class="arrow-btn arrow-left" id="prevBtn" title="上一頁">
+      <img src="images/arrow_left.png" id="arrowLeftImg" alt="Prev" />
+    </button>
+
+    <div class="book-viewport" id="slideViewport"></div>
+
+    <button class="arrow-btn arrow-right" id="nextBtn" title="下一頁">
+      <img src="images/arrow_right.png" id="arrowRightImg" alt="Next" />
+    </button>
+
+    <div class="drawer-overlay" id="thumbDrawer"></div>
+  </main>
+
+  <footer>
+    <div class="audio-dock">
+      <!-- Background Music Dock -->
+      <div class="sound-pod" title="Background Music Loop">
+        <button class="sound-pod-btn" id="bgmToggleBtn">♫</button>
+        <span class="pod-title">背景音樂 (music)</span>
+        <input type="range" class="volume-bar" id="bgmVol" min="0" max="1" step="0.05" value="0.35" />
+      </div>
+
+      <!-- Speech Dock -->
+      <div class="sound-pod" title="Page Audiobook Speech">
+        <button class="sound-pod-btn" id="narrToggleBtn">▶</button>
+        <span class="pod-title">語音朗讀 (speech)</span>
+        <input type="range" class="volume-bar" id="narrVol" min="0" max="1" step="0.05" value="0.9" />
+      </div>
+
+      <button class="btn-action active" id="btnAutoNarrate" title="換頁自動朗讀切換">
+        <span>🗣️ 自動朗讀: 開</span>
+      </button>
+    </div>
+
+    <div class="page-tag" id="pageTag">封面 / 19</div>
+  </footer>
+
+  <div class="tribal-rhombus-bar"></div>
+
+  <!-- Start Overlay -->
+  <div id="startBackdrop">
+    <div class="start-dialog">
+      <img src="images/girl_avatar.png" id="dialogAvatar" style="width:68px; margin-bottom:12px;" alt="Icon" />
+      <h2>mnanak na qalang</h2>
+      <p>歡迎進入《泰雅奇幻之旅》有聲繪本互動世界。<br/>點選下方按鈕，同時啟動背景音樂與隨頁語音朗讀。</p>
+      <button class="btn-begin" id="startBtn">開始閱讀 📖</button>
+    </div>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="bgmAudio" loop preload="auto"></audio>
+  <audio id="narrAudio" preload="auto"></audio>
+
+  <script>
+    const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/LanAbay/audio-picture-book/main/";
+
+    // Embedded Vector Fallbacks for UI Icons
+    const EMBEDDED_ICONS = {
+      arrowLeft: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 20'%3E%3Cpolygon points='16,0 16,7 50,7 50,13 16,13 16,20 0,10' fill='%23c52928' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E",
+      arrowRight: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 20'%3E%3Cpolygon points='34,0 34,7 0,7 0,13 34,13 34,20 50,10' fill='%23c52928' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E",
+      girlAvatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='23' fill='%23e67e22'/%3E%3Ccircle cx='25' cy='25' r='18' fill='%23f1c40f'/%3E%3Ccircle cx='18' cy='22' r='4' fill='%232c3e50'/%3E%3Ccircle cx='32' cy='22' r='4' fill='%232c3e50'/%3E%3Cpath d='M20,32 Q25,38 30,32' stroke='%23c0392b' stroke-width='2' fill='none'/%3E%3Ccircle cx='36' cy='14' r='5' fill='%23e91e63'/%3E%3C/svg%3E"
+    };
+
+    function setupUIAssets() {
+      const setFallback = (imgEl, primaryPath, fallback) => {
+        imgEl.src = primaryPath;
+        imgEl.onerror = () => { imgEl.src = fallback; };
+      };
+      setFallback(document.getElementById('arrowLeftImg'), 'images/arrow_left.png', EMBEDDED_ICONS.arrowLeft);
+      setFallback(document.getElementById('arrowRightImg'), 'images/arrow_right.png', EMBEDDED_ICONS.arrowRight);
+      setFallback(document.getElementById('avatarImg'), 'images/girl_avatar.png', EMBEDDED_ICONS.girlAvatar);
+      setFallback(document.getElementById('dialogAvatar'), 'images/girl_avatar.png', EMBEDDED_ICONS.girlAvatar);
+    }
+
+    /* ============================================================
+       COMPLETE BOOK DATA (20 Pages)
+       ============================================================ */
+    const bookPages = [
+      {
+        page: 0,
+        img: 'images/page_00.jpg',
+        tayal: 'mnanak na qalang · Drawings by Zirong Chou',
+        chinese: '【封面】mnanak na qalang 泰雅奇幻之旅 · 繪圖：周子蓉',
+        english: 'mnanak na qalang (The Miraculous Village) · Illustrated by Zirong Chou'
+      },
+      {
+        page: 1,
+        img: 'images/page_01.jpg',
+        tayal: 'Mami trakis lga, nyux msqun kwara tayal magal pslkawtas.',
+        chinese: '小米結實纍纍的金黃秋季，族人齊心籌辦莊嚴的祖靈祭，田野間鳥雀雀躍。',
+        english: 'During the golden millet harvest, the Atayal villagers gather in fellowship to prepare the sacred ancestral festival.'
+      },
+      {
+        page: 2,
+        img: 'images/page_02.jpg',
+        tayal: 'Laxi pzi’i ru kangi! Aring pslkawtas lga, laxi tkari squ tunux hbun.',
+        chinese: '老人家鄭重告誡：「祭典下山時千萬不可回頭看，免遭山神與邪靈帶走！」竹筒斟滿祭酒敬拜神木。',
+        english: 'The elders sternly warned: "Never look back on your way down after the ritual!" Bamboo vessels of wine hung from the sacred tree.'
+      },
+      {
+        page: 3,
+        img: 'images/page_03.jpg',
+        tayal: 'Wal hminas gaga qu Watan, rasun na mtkari na rgyax lmkuw.',
+        chinese: '瓦旦不小心違背了禁忌回了頭！剎那間，黑影般戴著面具的矮人從密林現身，將瓦旦急拽而去！',
+        english: 'Watan inadvertently broke the taboo and looked back. Masked shadow spirits darted from the dark woods and whisked him away!'
+      },
+      {
+        page: 4,
+        img: 'images/page_04.jpg',
+        tayal: 'Tehuk squ mnkum balay na qalang, ungat wagi, mnanak balay qu klhangan qani!',
+        chinese: '瓦旦被押送到幽暗的奇幻部落，天空中沒有溫暖的太陽，只有一輪血色冷月與持火炬的矮人勇士。',
+        english: 'Watan was brought into a sunless, twilight realm under an eclipsed sky, greeted by little warriors bearing torches.'
+      },
+      {
+        page: 5,
+        img: 'images/page_05.jpg',
+        tayal: 'Mita squ mrhuw na qalang ru laqi nya kneril nyux sbetaq phpah.',
+        chinese: '瓦旦被押至頭目的雕花大座前，頭目身旁面具上簪著粉紅小花的女兒，正既羞澀又好奇地端詳著他。',
+        english: 'He stood before the revered chief. Beside the throne, the chief’s sweet daughter with a flower on her mask gazed at him softly.'
+      },
+      {
+        page: 6,
+        img: 'images/page_06.jpg',
+        tayal: 'Nanu maniq nha? Nyux sbang mqu, kulu ru srakaw! Nhyul balay Watan!',
+        chinese: '盛大的迎賓盛宴端上了桌——杯盤裡竟盛著毒蛇、青蛙與大蜈蚣！瓦旦雙手捧杯嚇得直冒冷汗！',
+        english: 'The feast was served—plates writhed with snakes, frogs, and centipedes! Watan held the chalice in cold-sweat bewilderment.'
+      },
+      {
+        page: 7,
+        img: 'images/page_07.jpg',
+        tayal: 'Kmut squ bzyuwak hiya! Huzil nha ga bzyuwak ta maki babaw cinbwanan!',
+        chinese: '飢餓的瓦旦架起火堆烤了一整隻香噴噴的山豬，卻渾然不知在矮人世界裡，我們的山豬竟是他們的「獵狗」！',
+        english: 'Ravenous, Watan roasted a wild boar over the campfire—wholly unaware that in this upside-down realm, wild boars are their loyal dogs!'
+      },
+      {
+        page: 8,
+        img: 'images/page_08.jpg',
+        tayal: 'Hngiyon nha Watan! Rramat kneril nyux mngilis mqbaq.',
+        chinese: '烤了「獵狗」的瓦旦觸犯眾怒被五花大綁在木樁上！戴花的小女孩焦急地流下眼淚，苦苦向族人求情。',
+        english: 'Furious at the loss of their "hound", warriors bound Watan to a stake while the flower-masked girl wept and pleaded for his life.'
+      },
+      {
+        page: 9,
+        img: 'images/page_09.jpg',
+        tayal: 'Paris na mnanak qalang ga zayziluk! Watan qu wal kmut kwara paris!',
+        chinese: '奇幻部落最大的死敵是滿山刺藤的野刺梅（野草莓）！英勇的瓦旦拔出獵刀，輕而易舉地斬盡所有荊棘妖怪！',
+        english: 'The mortal enemies of the little people were thorny wild raspberry vines! Brave Watan drew his machete and hacked them all down!'
+      },
+      {
+        page: 10,
+        img: 'images/page_10.jpg',
+        tayal: 'Bzyuwak nha ga qpatung ta! Watan qu wal magal hopa balay bzyuwak!',
+        chinese: '原來矮人眼中的兇猛山豬，就是溪邊蹦跳的綠青蛙！瓦旦用竹竿串起一大把青蛙，部落歡聲雷動尊他為英雄！',
+        english: 'To them, leaping river frogs were fierce wild boars! Watan netted a pole of frogs, and the tribe hailed him as a legendary hero!'
+      },
+      {
+        page: 11,
+        img: 'images/page_11.jpg',
+        tayal: 'Swayay la! Ini nbah kbaq mqas ru snhyun ta laqi kneril qasa.',
+        chinese: '離別的晨曦照亮了山谷，瓦旦單膝跪下，與依依不捨的戴花小女孩雙手緊握，互道珍重祝福。',
+        english: 'Dawn of departure arrived. Watan knelt in the golden light, clasping hands with the tearful little girl in tender farewell.'
+      },
+      {
+        page: 12,
+        img: 'images/page_12.jpg',
+        tayal: 'Biqan na mrhuw qu mnanak na bula tanux niqan gaga.',
+        chinese: '頭目親手將一束神聖耀眼的魔法「紅色細箭」贈予瓦旦，作為部落最崇高的友誼盟約。',
+        english: 'The chief presented Watan with a luminous quiver of magical red arrows—the supreme symbol of their eternal bond.'
+      },
+      {
+        page: 13,
+        img: 'images/page_13.jpg',
+        tayal: 'M’abi squ ngasal trakis lga, yaki nya qu siliq balay wal mita Watan!',
+        chinese: '金黃的晨光照進自家穀倉，紋面的阿嬤推開門，驚喜萬分地發現失蹤的瓦旦正安穩沉睡在小米堆上！',
+        english: 'Golden sunlight illuminated the family granary. The tattooed grandmother was overjoyed to find Watan sound asleep on the millet.'
+      },
+      {
+        page: 14,
+        img: 'images/page_14.jpg',
+        tayal: 'Sqas balay kwara ngasal! Watan nyux minokay la!',
+        chinese: '瓦旦平安歸來，父母、長老和小弟弟全都圍攏過來，獵犬興奮地直搖尾巴，全家沉浸在團圓的喜悅中。',
+        english: 'Watan’s miraculous return brought joy and tears; family and village elders surrounded him while their hunting dog wagged its tail.'
+      },
+      {
+        page: 15,
+        img: 'images/page_15.jpg',
+        tayal: 'Biqun nya zyuwaw na mnanak na qalang squ kwara binkgan.',
+        chinese: '瓦旦手握著神奇紅箭，繪聲繪色地向族人描述那個野草莓是敵人、青蛙是山豬的奇幻國度。',
+        english: 'Holding the red arrows, Watan vividly recounted his journey—a land where wild berries were enemies and frogs were wild boars!'
+      },
+      {
+        page: 16,
+        img: 'images/page_16.jpg',
+        tayal: 'Spiyat na bula tanux lga, hminas squ bzywawk ru mit rgyax!',
+        chinese: '瓦旦搭上神奇紅箭走向獵場，紅光一閃，靈動飛躍的山羌應聲而落，箭無虛發！',
+        english: 'In the hunting mountains, a single flash of the red arrow flew with magical precision, effortlessly striking swift muntjacs.'
+      },
+      {
+        page: 17,
+        img: 'images/page_17.jpg',
+        tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara cinbwanan tayal.',
+        chinese: '獵隊在密林中收穫豐碩，獵犬與族人都對這股神秘庇佑的神奇力量由衷讚嘆。',
+        english: 'Deep in the misty woods, hunters and hounds rejoiced in the bountiful harvest blessed by ancestral mountain spirits.'
+      },
+      {
+        page: 18,
+        img: 'images/page_18.jpg',
+        tayal: 'Qutux ci bula tanux wal nha sliyan balay bzyuwak roziq!',
+        chinese: '營火上烤著一頭前所未見的龐大雄健野豬，族人驚訝地看著山豬身上竟然僅插著那一支小小的紅箭！',
+        english: 'Over the roaring hearth roasted a gigantic wild boar—felled by nothing more than a single, miraculous tiny red arrow!'
+      },
+      {
+        page: 19,
+        img: 'images/page_19.jpg',
+        tayal: 'Mita squ rgyax bsilung, nyux maki kya qu mnanak na qalang, pungan squ qbhniq.',
+        chinese: '群山蒼翠，雲霧繚繞中騰起一道金色螺旋炊煙，巨鷹昂然盤旋，守護著泰雅族永遠傳頌的奇幻傳奇。',
+        english: 'Above the mountain peaks, a spiral of golden smoke ascended as an eagle soared—keeping the Atayal legend alive forever.'
+      }
+    ];
+
+    let currentIndex = 0;
+    let autoNarration = true;
+
+    const slideViewport = document.getElementById('slideViewport');
+    const thumbDrawer = document.getElementById('thumbDrawer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageTag = document.getElementById('pageTag');
+    const startBackdrop = document.getElementById('startBackdrop');
+    const startBtn = document.getElementById('startBtn');
+
+    const bgmAudio = document.getElementById('bgmAudio');
+    const narrAudio = document.getElementById('narrAudio');
+    const bgmToggleBtn = document.getElementById('bgmToggleBtn');
+    const narrToggleBtn = document.getElementById('narrToggleBtn');
+    const bgmVol = document.getElementById('bgmVol');
+    const narrVol = document.getElementById('narrVol');
+    const btnAutoNarrate = document.getElementById('btnAutoNarrate');
+    const btnFullscreen = document.getElementById('btnFullscreen');
+    const btnThumbnails = document.getElementById('btnThumbnails');
+
+    function buildBook() {
+      slideViewport.innerHTML = '';
+      thumbDrawer.innerHTML = '';
+
+      bookPages.forEach((p, idx) => {
+        const slide = document.createElement('div');
+        slide.className = `page-slide ${idx === 0 ? 'active' : ''}`;
+        slide.id = `slide_${idx}`;
+        slide.innerHTML = `
+          <div class="illustration-frame">
+            <img src="${p.img}" alt="Page ${idx}" onerror="this.src='${GITHUB_RAW_BASE + p.img}'" />
+          </div>
+          <div class="caption-card">
+            <div class="txt-atayal">${p.tayal}</div>
+            <div class="txt-chinese">${p.chinese}</div>
+            <div class="txt-english">${p.english}</div>
+          </div>
+        `;
+        slideViewport.appendChild(slide);
+
+        const thumb = document.createElement('div');
+        thumb.className = `thumb-node ${idx === 0 ? 'active' : ''}`;
+        thumb.id = `thumb_${idx}`;
+        thumb.innerHTML = `
+          <img src="${p.img}" alt="Thumb ${idx}" onerror="this.src='${GITHUB_RAW_BASE + p.img}'" />
+          <span>${idx === 0 ? '封面' : idx}</span>
+        `;
+        thumb.addEventListener('click', () => {
+          goToPage(idx);
+          thumbDrawer.classList.remove('open');
+        });
+        thumbDrawer.appendChild(thumb);
+      });
+
+      updateIndicators();
+    }
+
+    function goToPage(targetIndex) {
+      if (targetIndex < 0 || targetIndex >= bookPages.length) return;
+
+      document.querySelectorAll('.page-slide').forEach(s => s.classList.remove('active'));
+      document.getElementById(`slide_${targetIndex}`).classList.add('active');
+
+      document.querySelectorAll('.thumb-node').forEach(t => t.classList.remove('active'));
+      const activeThumb = document.getElementById(`thumb_${targetIndex}`);
+      if (activeThumb) {
+        activeThumb.classList.add('active');
+        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+
+      currentIndex = targetIndex;
+      updateIndicators();
+      playNarration(targetIndex);
+    }
+
+    function updateIndicators() {
+      pageTag.textContent = currentIndex === 0 ? `封面 / 19` : `第 ${currentIndex} 頁 / 19`;
+      prevBtn.style.opacity = currentIndex === 0 ? '0.35' : '1';
+      nextBtn.style.opacity = currentIndex === bookPages.length - 1 ? '0.35' : '1';
+    }
+
+    /* Smart Speech Loader (Tries common naming in speech/ folder) */
+    function playNarration(index) {
+      narrAudio.pause();
+      const pad = String(index).padStart(2, '0');
+      
+      // Candidate paths inside speech/ folder
+      const candidates = [
+        `speech/page_${pad}.mp3`,
+        `speech/page${pad}.mp3`,
+        `speech/${pad}.mp3`,
+        `speech/page_${index}.mp3`,
+        `speech/page${index}.mp3`,
+        `speech/${index}.mp3`,
+        `${GITHUB_RAW_BASE}speech/page_${pad}.mp3`
+      ];
+
+      let candidateIndex = 0;
+      function tryNextCandidate() {
+        if (candidateIndex < candidates.length) {
+          narrAudio.src = candidates[candidateIndex++];
+        }
+      }
+
+      narrAudio.onerror = tryNextCandidate;
+      tryNextCandidate();
+
+      narrAudio.currentTime = 0;
+      narrAudio.volume = parseFloat(narrVol.value);
+
+      if (autoNarration) {
+        narrAudio.play().then(() => {
+          narrToggleBtn.textContent = '❚❚';
+        }).catch(() => {
+          narrToggleBtn.textContent = '▶';
+        });
+      } else {
+        narrToggleBtn.textContent = '▶';
+      }
+    }
+
+    /* Smart Music (BGM) Loader (Tries candidates inside music/ folder) */
+    function initBgm() {
+      const bgmCandidates = [
+        'music/bgm.mp3',
+        'music/music.mp3',
+        'music/background.mp3',
+        'music/bgm.wav',
+        `${GITHUB_RAW_BASE}music/bgm.mp3`
+      ];
+
+      let bgmIndex = 0;
+      function tryNextBgm() {
+        if (bgmIndex < bgmCandidates.length) {
+          bgmAudio.src = bgmCandidates[bgmIndex++];
+        }
+      }
+      bgmAudio.onerror = tryNextBgm;
+      tryNextBgm();
+    }
+
+    function toggleBgm() {
+      if (bgmAudio.paused) {
+        bgmAudio.volume = parseFloat(bgmVol.value);
+        bgmAudio.play().then(() => {
+          bgmToggleBtn.textContent = '❚❚';
+        }).catch(() => {});
+      } else {
+        bgmAudio.pause();
+        bgmToggleBtn.textContent = '♫';
+      }
+    }
+
+    // Event listeners
+    prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') goToPage(currentIndex - 1);
+      if (e.key === 'ArrowRight') goToPage(currentIndex + 1);
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (narrAudio.paused) {
+          narrAudio.play();
+          narrToggleBtn.textContent = '❚❚';
+        } else {
+          narrAudio.pause();
+          narrToggleBtn.textContent = '▶';
+        }
+      }
+      if (e.key === 'm' || e.key === 'M') toggleBgm();
+    });
+
+    let touchX = 0;
+    slideViewport.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
+    slideViewport.addEventListener('touchend', e => {
+      const diff = touchX - e.changedTouches[0].screenX;
+      if (diff > 45) goToPage(currentIndex + 1);
+      if (diff < -45) goToPage(currentIndex - 1);
+    }, { passive: true });
+
+    bgmToggleBtn.addEventListener('click', toggleBgm);
+    narrToggleBtn.addEventListener('click', () => {
+      if (narrAudio.paused) {
+        narrAudio.play();
+        narrToggleBtn.textContent = '❚❚';
+      } else {
+        narrAudio.pause();
+        narrToggleBtn.textContent = '▶';
+      }
+    });
+    narrAudio.addEventListener('ended', () => { narrToggleBtn.textContent = '▶'; });
+
+    bgmVol.addEventListener('input', e => { bgmAudio.volume = e.target.value; });
+    narrVol.addEventListener('input', e => { narrAudio.volume = e.target.value; });
+
+    btnAutoNarrate.addEventListener('click', () => {
+      autoNarration = !autoNarration;
+      btnAutoNarrate.classList.toggle('active', autoNarration);
+      btnAutoNarrate.querySelector('span').textContent = autoNarration ? '🗣️ 自動朗讀: 開' : '🗣️ 自動朗讀: 關';
+    });
+
+    btnThumbnails.addEventListener('click', () => {
+      thumbDrawer.classList.toggle('open');
+    });
+
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    startBtn.addEventListener('click', () => {
+      startBackdrop.style.display = 'none';
+      bgmAudio.volume = parseFloat(bgmVol.value);
+      bgmAudio.play().then(() => { bgmToggleBtn.textContent = '❚❚'; }).catch(() => {});
+      playNarration(0);
+    });
+
+    setupUIAssets();
+    initBgm();
+    buildBook();
+  </script>
+</body>
+</html>
