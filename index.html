@@ -35,6 +35,7 @@
       position: relative;
     }
 
+    /* 泰雅族傳統菱形紋飾邊條 */
     .tribal-rhombus-bar {
       height: 14px;
       width: 100%;
@@ -59,7 +60,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 8px 20px;
-      background: rgba(20, 16, 18, 0.9);
+      background: rgba(20, 16, 18, 0.92);
       backdrop-filter: blur(10px);
       z-index: 25;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -73,17 +74,14 @@
     }
 
     .avatar-icon {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
       border: 1.5px solid var(--gold-accent);
       padding: 2px;
       object-fit: contain;
-      cursor: pointer;
-      transition: transform 0.2s ease;
     }
-    .avatar-icon:hover { transform: scale(1.1) rotate(5deg); }
 
     .title-group h1 {
       font-size: 1.15rem;
@@ -228,8 +226,8 @@
       width: 58px;
       height: 58px;
       border-radius: 50%;
-      background: rgba(18, 14, 16, 0.5);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(18, 14, 16, 0.6);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -239,17 +237,13 @@
       padding: 0;
     }
     .arrow-btn:hover {
-      background: rgba(197, 41, 40, 0.85);
+      background: rgba(197, 41, 40, 0.9);
       border-color: #ffd875;
       transform: translateY(-50%) scale(1.12);
-      box-shadow: 0 0 18px rgba(197, 41, 40, 0.7);
+      box-shadow: 0 0 18px rgba(197, 41, 40, 0.75);
     }
     .arrow-btn:active { transform: translateY(-50%) scale(0.95); }
-    .arrow-btn img {
-      width: 32px;
-      height: auto;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
-    }
+    .arrow-btn svg { width: 32px; height: 16px; }
     .arrow-left { left: 16px; }
     .arrow-right { right: 16px; }
 
@@ -349,6 +343,7 @@
       opacity: 0.65;
       transition: all 0.2s ease;
       position: relative;
+      background: #000;
     }
     .thumb-node:hover, .thumb-node.active {
       opacity: 1;
@@ -415,11 +410,39 @@
       transform: scale(1.05);
     }
 
+    /* 檔案診斷視窗 */
+    #diagModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 95;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .diag-box {
+      background: #1c181a;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      max-width: 540px;
+      width: 100%;
+      padding: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+    .diag-box h3 { color: var(--gold-accent); margin-bottom: 8px; }
+    .diag-box p { color: #aaa; margin-bottom: 12px; line-height: 1.4; }
+    .diag-list { background: #0c0a0b; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; max-height: 220px; overflow-y: auto; }
+    .diag-item { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #222; }
+    .diag-ok { color: #55ff55; }
+    .diag-fail { color: #ff6666; }
+
     @media (max-width: 768px) {
       .title-group h1 { font-size: 1rem; }
       .title-group p { display: none; }
       .arrow-btn { width: 44px; height: 44px; }
-      .arrow-btn img { width: 22px; }
       .illustration-frame { height: 65%; }
       .caption-card { max-height: 110px; font-size: 0.82rem; }
       .sound-pod { padding: 3px 6px; }
@@ -433,13 +456,24 @@
 
   <header>
     <div class="header-left">
-      <img src="images/girl_avatar.png" id="avatarImg" class="avatar-icon" alt="Avatar" title="Watan & Masked Girl" />
+      <!-- 內嵌小女孩向量圖示，永不遺失 -->
+      <svg class="avatar-icon" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="23" fill="#e67e22"/>
+        <circle cx="25" cy="25" r="18" fill="#f1c40f"/>
+        <circle cx="18" cy="22" r="3.5" fill="#2c3e50"/>
+        <circle cx="32" cy="22" r="3.5" fill="#2c3e50"/>
+        <path d="M20,32 Q25,38 30,32" stroke="#c0392b" stroke-width="2" fill="none"/>
+        <circle cx="36" cy="14" r="5" fill="#e91e63"/>
+      </svg>
       <div class="title-group">
         <h1>mnanak na qalang</h1>
         <p>泰雅奇幻之旅 · Atayal Interactive Audio Picture Book</p>
       </div>
     </div>
     <div class="header-right">
+      <button class="btn-action" id="btnDiagnose" title="查看檔案探測狀態">
+        <span>🔍 檔案狀態</span>
+      </button>
       <button class="btn-action" id="btnThumbnails" title="切換目錄">
         <span>📑 目錄</span>
       </button>
@@ -450,14 +484,19 @@
   </header>
 
   <main id="readerStage">
+    <!-- 內嵌紅色小箭頭向量圖示 -->
     <button class="arrow-btn arrow-left" id="prevBtn" title="上一頁">
-      <img src="images/arrow_left.png" id="arrowLeftImg" alt="Prev" />
+      <svg viewBox="0 0 50 20">
+        <polygon points="16,0 16,7 50,7 50,13 16,13 16,20 0,10" fill="#c52928" stroke="#ffffff" stroke-width="1.2"/>
+      </svg>
     </button>
 
     <div class="book-viewport" id="slideViewport"></div>
 
     <button class="arrow-btn arrow-right" id="nextBtn" title="下一頁">
-      <img src="images/arrow_right.png" id="arrowRightImg" alt="Next" />
+      <svg viewBox="0 0 50 20">
+        <polygon points="34,0 34,7 0,7 0,13 34,13 34,20 50,10" fill="#c52928" stroke="#ffffff" stroke-width="1.2"/>
+      </svg>
     </button>
 
     <div class="drawer-overlay" id="thumbDrawer"></div>
@@ -465,14 +504,12 @@
 
   <footer>
     <div class="audio-dock">
-      <!-- Background Music Dock -->
       <div class="sound-pod" title="Background Music Loop">
         <button class="sound-pod-btn" id="bgmToggleBtn">♫</button>
         <span class="pod-title">背景音樂 (music)</span>
         <input type="range" class="volume-bar" id="bgmVol" min="0" max="1" step="0.05" value="0.35" />
       </div>
 
-      <!-- Speech Dock -->
       <div class="sound-pod" title="Page Audiobook Speech">
         <button class="sound-pod-btn" id="narrToggleBtn">▶</button>
         <span class="pod-title">語音朗讀 (speech)</span>
@@ -489,181 +526,157 @@
 
   <div class="tribal-rhombus-bar"></div>
 
-  <!-- Start Overlay -->
+  <!-- 開始互動視窗 (符合瀏覽器自動播放規則) -->
   <div id="startBackdrop">
     <div class="start-dialog">
-      <img src="images/girl_avatar.png" id="dialogAvatar" style="width:68px; margin-bottom:12px;" alt="Icon" />
+      <svg viewBox="0 0 50 50" style="width:68px; margin-bottom:12px;">
+        <circle cx="25" cy="25" r="23" fill="#e67e22"/>
+        <circle cx="25" cy="25" r="18" fill="#f1c40f"/>
+        <circle cx="18" cy="22" r="3.5" fill="#2c3e50"/>
+        <circle cx="32" cy="22" r="3.5" fill="#2c3e50"/>
+        <path d="M20,32 Q25,38 30,32" stroke="#c0392b" stroke-width="2" fill="none"/>
+        <circle cx="36" cy="14" r="5" fill="#e91e63"/>
+      </svg>
       <h2>mnanak na qalang</h2>
-      <p>歡迎進入《泰雅奇幻之旅》有聲繪本互動世界。<br/>點選下方按鈕，同時啟動背景音樂與隨頁語音朗讀。</p>
+      <p>歡迎進入《泰雅奇幻之旅》有聲繪本互動世界。<br/>點選下方按鈕，開始閱讀並聆聽背景音樂與語音朗讀。</p>
       <button class="btn-begin" id="startBtn">開始閱讀 📖</button>
     </div>
   </div>
 
-  <!-- Audio Elements -->
+  <!-- 診斷狀態視窗 -->
+  <div id="diagModal">
+    <div class="diag-box">
+      <h3>🔍 資料夾與檔案載入狀態檢測</h3>
+      <p>此面板顯示瀏覽器目前從 <code>graphic/</code>、<code>music/</code>、<code>speech/</code> 讀取檔案的情況：</p>
+      <div class="diag-list" id="diagList"></div>
+      <button class="btn-action" id="btnCloseDiag" style="width:100%; justify-content:center; margin-top:12px;">關閉檢測面板</button>
+    </div>
+  </div>
+
   <audio id="bgmAudio" loop preload="auto"></audio>
   <audio id="narrAudio" preload="auto"></audio>
 
   <script>
-    const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/LanAbay/audio-picture-book/main/";
+    const GITHUB_RAW = "https://raw.githubusercontent.com/LanAbay/audio-picture-book/main/";
 
-    // Embedded Vector Fallbacks for UI Icons
-    const EMBEDDED_ICONS = {
-      arrowLeft: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 20'%3E%3Cpolygon points='16,0 16,7 50,7 50,13 16,13 16,20 0,10' fill='%23c52928' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E",
-      arrowRight: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 20'%3E%3Cpolygon points='34,0 34,7 0,7 0,13 34,13 34,20 50,10' fill='%23c52928' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E",
-      girlAvatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='23' fill='%23e67e22'/%3E%3Ccircle cx='25' cy='25' r='18' fill='%23f1c40f'/%3E%3Ccircle cx='18' cy='22' r='4' fill='%232c3e50'/%3E%3Ccircle cx='32' cy='22' r='4' fill='%232c3e50'/%3E%3Cpath d='M20,32 Q25,38 30,32' stroke='%23c0392b' stroke-width='2' fill='none'/%3E%3Ccircle cx='36' cy='14' r='5' fill='%23e91e63'/%3E%3C/svg%3E"
-    };
-
-    function setupUIAssets() {
-      const setFallback = (imgEl, primaryPath, fallback) => {
-        imgEl.src = primaryPath;
-        imgEl.onerror = () => { imgEl.src = fallback; };
-      };
-      setFallback(document.getElementById('arrowLeftImg'), 'images/arrow_left.png', EMBEDDED_ICONS.arrowLeft);
-      setFallback(document.getElementById('arrowRightImg'), 'images/arrow_right.png', EMBEDDED_ICONS.arrowRight);
-      setFallback(document.getElementById('avatarImg'), 'images/girl_avatar.png', EMBEDDED_ICONS.girlAvatar);
-      setFallback(document.getElementById('dialogAvatar'), 'images/girl_avatar.png', EMBEDDED_ICONS.girlAvatar);
-    }
-
-    /* ============================================================
-       COMPLETE BOOK DATA (20 Pages)
-       ============================================================ */
+    /* 繪本 20 頁文字資料庫 (封面 + 19 頁完整故事) */
     const bookPages = [
       {
         page: 0,
-        img: 'images/page_00.jpg',
         tayal: 'mnanak na qalang · Drawings by Zirong Chou',
         chinese: '【封面】mnanak na qalang 泰雅奇幻之旅 · 繪圖：周子蓉',
         english: 'mnanak na qalang (The Miraculous Village) · Illustrated by Zirong Chou'
       },
       {
         page: 1,
-        img: 'images/page_01.jpg',
         tayal: 'Mami trakis lga, nyux msqun kwara tayal magal pslkawtas.',
         chinese: '小米結實纍纍的金黃秋季，族人齊心籌辦莊嚴的祖靈祭，田野間鳥雀雀躍。',
         english: 'During the golden millet harvest, the Atayal villagers gather in fellowship to prepare the sacred ancestral festival.'
       },
       {
         page: 2,
-        img: 'images/page_02.jpg',
         tayal: 'Laxi pzi’i ru kangi! Aring pslkawtas lga, laxi tkari squ tunux hbun.',
         chinese: '老人家鄭重告誡：「祭典下山時千萬不可回頭看，免遭山神與邪靈帶走！」竹筒斟滿祭酒敬拜神木。',
         english: 'The elders sternly warned: "Never look back on your way down after the ritual!" Bamboo vessels of wine hung from the sacred tree.'
       },
       {
         page: 3,
-        img: 'images/page_03.jpg',
         tayal: 'Wal hminas gaga qu Watan, rasun na mtkari na rgyax lmkuw.',
         chinese: '瓦旦不小心違背了禁忌回了頭！剎那間，黑影般戴著面具的矮人從密林現身，將瓦旦急拽而去！',
         english: 'Watan inadvertently broke the taboo and looked back. Masked shadow spirits darted from the dark woods and whisked him away!'
       },
       {
         page: 4,
-        img: 'images/page_04.jpg',
         tayal: 'Tehuk squ mnkum balay na qalang, ungat wagi, mnanak balay qu klhangan qani!',
         chinese: '瓦旦被押送到幽暗的奇幻部落，天空中沒有溫暖的太陽，只有一輪血色冷月與持火炬的矮人勇士。',
         english: 'Watan was brought into a sunless, twilight realm under an eclipsed sky, greeted by little warriors bearing torches.'
       },
       {
         page: 5,
-        img: 'images/page_05.jpg',
         tayal: 'Mita squ mrhuw na qalang ru laqi nya kneril nyux sbetaq phpah.',
         chinese: '瓦旦被押至頭目的雕花大座前，頭目身旁面具上簪著粉紅小花的女兒，正既羞澀又好奇地端詳著他。',
         english: 'He stood before the revered chief. Beside the throne, the chief’s sweet daughter with a flower on her mask gazed at him softly.'
       },
       {
         page: 6,
-        img: 'images/page_06.jpg',
         tayal: 'Nanu maniq nha? Nyux sbang mqu, kulu ru srakaw! Nhyul balay Watan!',
         chinese: '盛大的迎賓盛宴端上了桌——杯盤裡竟盛著毒蛇、青蛙與大蜈蚣！瓦旦雙手捧杯嚇得直冒冷汗！',
         english: 'The feast was served—plates writhed with snakes, frogs, and centipedes! Watan held the chalice in cold-sweat bewilderment.'
       },
       {
         page: 7,
-        img: 'images/page_07.jpg',
         tayal: 'Kmut squ bzyuwak hiya! Huzil nha ga bzyuwak ta maki babaw cinbwanan!',
         chinese: '飢餓的瓦旦架起火堆烤了一整隻香噴噴的山豬，卻渾然不知在矮人世界裡，我們的山豬竟是他們的「獵狗」！',
         english: 'Ravenous, Watan roasted a wild boar over the campfire—wholly unaware that in this upside-down realm, wild boars are their loyal dogs!'
       },
       {
         page: 8,
-        img: 'images/page_08.jpg',
         tayal: 'Hngiyon nha Watan! Rramat kneril nyux mngilis mqbaq.',
         chinese: '烤了「獵狗」的瓦旦觸犯眾怒被五花大綁在木樁上！戴花的小女孩焦急地流下眼淚，苦苦向族人求情。',
         english: 'Furious at the loss of their "hound", warriors bound Watan to a stake while the flower-masked girl wept and pleaded for his life.'
       },
       {
         page: 9,
-        img: 'images/page_09.jpg',
         tayal: 'Paris na mnanak qalang ga zayziluk! Watan qu wal kmut kwara paris!',
         chinese: '奇幻部落最大的死敵是滿山刺藤的野刺梅（野草莓）！英勇的瓦旦拔出獵刀，輕而易舉地斬盡所有荊棘妖怪！',
         english: 'The mortal enemies of the little people were thorny wild raspberry vines! Brave Watan drew his machete and hacked them all down!'
       },
       {
         page: 10,
-        img: 'images/page_10.jpg',
         tayal: 'Bzyuwak nha ga qpatung ta! Watan qu wal magal hopa balay bzyuwak!',
         chinese: '原來矮人眼中的兇猛山豬，就是溪邊蹦跳的綠青蛙！瓦旦用竹竿串起一大把青蛙，部落歡聲雷動尊他為英雄！',
         english: 'To them, leaping river frogs were fierce wild boars! Watan netted a pole of frogs, and the tribe hailed him as a legendary hero!'
       },
       {
         page: 11,
-        img: 'images/page_11.jpg',
         tayal: 'Swayay la! Ini nbah kbaq mqas ru snhyun ta laqi kneril qasa.',
         chinese: '離別的晨曦照亮了山谷，瓦旦單膝跪下，與依依不捨的戴花小女孩雙手緊握，互道珍重祝福。',
         english: 'Dawn of departure arrived. Watan knelt in the golden light, clasping hands with the tearful little girl in tender farewell.'
       },
       {
         page: 12,
-        img: 'images/page_12.jpg',
         tayal: 'Biqan na mrhuw qu mnanak na bula tanux niqan gaga.',
         chinese: '頭目親手將一束神聖耀眼的魔法「紅色細箭」贈予瓦旦，作為部落最崇高的友誼盟約。',
         english: 'The chief presented Watan with a luminous quiver of magical red arrows—the supreme symbol of their eternal bond.'
       },
       {
         page: 13,
-        img: 'images/page_13.jpg',
         tayal: 'M’abi squ ngasal trakis lga, yaki nya qu siliq balay wal mita Watan!',
         chinese: '金黃的晨光照進自家穀倉，紋面的阿嬤推開門，驚喜萬分地發現失蹤的瓦旦正安穩沉睡在小米堆上！',
         english: 'Golden sunlight illuminated the family granary. The tattooed grandmother was overjoyed to find Watan sound asleep on the millet.'
       },
       {
         page: 14,
-        img: 'images/page_14.jpg',
         tayal: 'Sqas balay kwara ngasal! Watan nyux minokay la!',
         chinese: '瓦旦平安歸來，父母、長老和小弟弟全都圍攏過來，獵犬興奮地直搖尾巴，全家沉浸在團圓的喜悅中。',
         english: 'Watan’s miraculous return brought joy and tears; family and village elders surrounded him while their hunting dog wagged its tail.'
       },
       {
         page: 15,
-        img: 'images/page_15.jpg',
         tayal: 'Biqun nya zyuwaw na mnanak na qalang squ kwara binkgan.',
         chinese: '瓦旦手握著神奇紅箭，繪聲繪色地向族人描述那個野草莓是敵人、青蛙是山豬的奇幻國度。',
         english: 'Holding the red arrows, Watan vividly recounted his journey—a land where wild berries were enemies and frogs were wild boars!'
       },
       {
         page: 16,
-        img: 'images/page_16.jpg',
         tayal: 'Spiyat na bula tanux lga, hminas squ bzywawk ru mit rgyax!',
         chinese: '瓦旦搭上神奇紅箭走向獵場，紅光一閃，靈動飛躍的山羌應聲而落，箭無虛發！',
         english: 'In the hunting mountains, a single flash of the red arrow flew with magical precision, effortlessly striking swift muntjacs.'
       },
       {
         page: 17,
-        img: 'images/page_17.jpg',
         tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara cinbwanan tayal.',
         chinese: '獵隊在密林中收穫豐碩，獵犬與族人都對這股神秘庇佑的神奇力量由衷讚嘆。',
         english: 'Deep in the misty woods, hunters and hounds rejoiced in the bountiful harvest blessed by ancestral mountain spirits.'
       },
       {
         page: 18,
-        img: 'images/page_18.jpg',
         tayal: 'Qutux ci bula tanux wal nha sliyan balay bzyuwak roziq!',
         chinese: '營火上烤著一頭前所未見的龐大雄健野豬，族人驚訝地看著山豬身上竟然僅插著那一支小小的紅箭！',
         english: 'Over the roaring hearth roasted a gigantic wild boar—felled by nothing more than a single, miraculous tiny red arrow!'
       },
       {
         page: 19,
-        img: 'images/page_19.jpg',
         tayal: 'Mita squ rgyax bsilung, nyux maki kya qu mnanak na qalang, pungan squ qbhniq.',
         chinese: '群山蒼翠，雲霧繚繞中騰起一道金色螺旋炊煙，巨鷹昂然盤旋，守護著泰雅族永遠傳頌的奇幻傳奇。',
         english: 'Above the mountain peaks, a spiral of golden smoke ascended as an eagle soared—keeping the Atayal legend alive forever.'
@@ -672,6 +685,7 @@
 
     let currentIndex = 0;
     let autoNarration = true;
+    const diagLog = [];
 
     const slideViewport = document.getElementById('slideViewport');
     const thumbDrawer = document.getElementById('thumbDrawer');
@@ -690,18 +704,77 @@
     const btnAutoNarrate = document.getElementById('btnAutoNarrate');
     const btnFullscreen = document.getElementById('btnFullscreen');
     const btnThumbnails = document.getElementById('btnThumbnails');
+    const btnDiagnose = document.getElementById('btnDiagnose');
+    const diagModal = document.getElementById('diagModal');
+    const diagList = document.getElementById('diagList');
+    const btnCloseDiag = document.getElementById('btnCloseDiag');
+
+    /* 智慧圖片候選路徑產生器（同時探測多種常見命名格式） */
+    function getImageCandidates(idx) {
+      const pad = String(idx).padStart(2, '0');
+      const list = [
+        `graphic/page_${pad}.jpg`,
+        `graphic/page_${pad}.png`,
+        `graphic/page_${pad}.jpeg`,
+        `graphic/${pad}.jpg`,
+        `graphic/${pad}.png`,
+        `graphic/${pad}.jpeg`,
+        `graphic/page${pad}.jpg`,
+        `graphic/page${pad}.png`,
+        `graphic/${idx}.jpg`,
+        `graphic/${idx}.png`,
+        `graphic/${idx}.jpeg`,
+        `graphic/page_${pad}.JPG`,
+        `graphic/${pad}.JPG`,
+        `graphic/${idx}.JPG`
+      ];
+      if (idx === 0) {
+        list.unshift(`graphic/cover.jpg`, `graphic/cover.png`, `graphic/cover.jpeg`);
+      }
+      return list;
+    }
+
+    /* 自動探測並掛載圖片 */
+    function attachAdaptiveImage(imgEl, pageIndex, isThumb = false) {
+      const candidates = getImageCandidates(pageIndex);
+      let step = 0;
+
+      function tryLoad() {
+        if (step < candidates.length) {
+          const path = candidates[step++];
+          imgEl.src = path;
+        } else {
+          // 全部嘗試失敗時，嘗試 GitHub Raw 作為最後備援
+          const fallback = `${GITHUB_RAW}graphic/page_${String(pageIndex).padStart(2,'0')}.jpg`;
+          if (imgEl.src !== fallback) {
+            imgEl.src = fallback;
+          } else if (!isThumb) {
+            logDiag(`[圖片失敗] 第 ${pageIndex} 頁在 graphic/ 找不到匹配檔案 (已嘗試過 page_${pageIndex}.jpg, ${pageIndex}.jpg 等)`, false);
+          }
+        }
+      }
+
+      imgEl.onerror = tryLoad;
+      imgEl.onload = () => {
+        if (!isThumb) {
+          logDiag(`[圖片成功] 第 ${pageIndex} 頁已成功載入: ${imgEl.src.split('/').slice(-2).join('/')}`, true);
+        }
+      };
+      tryLoad();
+    }
 
     function buildBook() {
       slideViewport.innerHTML = '';
       thumbDrawer.innerHTML = '';
 
       bookPages.forEach((p, idx) => {
+        // 主輪播頁
         const slide = document.createElement('div');
         slide.className = `page-slide ${idx === 0 ? 'active' : ''}`;
         slide.id = `slide_${idx}`;
         slide.innerHTML = `
           <div class="illustration-frame">
-            <img src="${p.img}" alt="Page ${idx}" onerror="this.src='${GITHUB_RAW_BASE + p.img}'" />
+            <img id="mainImg_${idx}" alt="Page ${idx}" />
           </div>
           <div class="caption-card">
             <div class="txt-atayal">${p.tayal}</div>
@@ -710,12 +783,14 @@
           </div>
         `;
         slideViewport.appendChild(slide);
+        attachAdaptiveImage(slide.querySelector(`#mainImg_${idx}`), idx, false);
 
+        // 目錄縮圖
         const thumb = document.createElement('div');
         thumb.className = `thumb-node ${idx === 0 ? 'active' : ''}`;
         thumb.id = `thumb_${idx}`;
         thumb.innerHTML = `
-          <img src="${p.img}" alt="Thumb ${idx}" onerror="this.src='${GITHUB_RAW_BASE + p.img}'" />
+          <img id="thumbImg_${idx}" alt="Thumb ${idx}" />
           <span>${idx === 0 ? '封面' : idx}</span>
         `;
         thumb.addEventListener('click', () => {
@@ -723,6 +798,7 @@
           thumbDrawer.classList.remove('open');
         });
         thumbDrawer.appendChild(thumb);
+        attachAdaptiveImage(thumb.querySelector(`#thumbImg_${idx}`), idx, true);
       });
 
       updateIndicators();
@@ -752,12 +828,11 @@
       nextBtn.style.opacity = currentIndex === bookPages.length - 1 ? '0.35' : '1';
     }
 
-    /* Smart Speech Loader (Tries common naming in speech/ folder) */
+    /* 語音探測 (從 speech/ 資料夾搜尋) */
     function playNarration(index) {
       narrAudio.pause();
       const pad = String(index).padStart(2, '0');
       
-      // Candidate paths inside speech/ folder
       const candidates = [
         `speech/page_${pad}.mp3`,
         `speech/page${pad}.mp3`,
@@ -765,18 +840,29 @@
         `speech/page_${index}.mp3`,
         `speech/page${index}.mp3`,
         `speech/${index}.mp3`,
-        `${GITHUB_RAW_BASE}speech/page_${pad}.mp3`
+        `speech/speech_${pad}.mp3`,
+        `speech/speech${pad}.mp3`,
+        `speech/speech_${index}.mp3`,
+        `speech/speech${index}.mp3`,
+        `${GITHUB_RAW}speech/page_${pad}.mp3`,
+        `${GITHUB_RAW}speech/${pad}.mp3`
       ];
+      if (index === 0) candidates.unshift(`speech/cover.mp3`);
 
-      let candidateIndex = 0;
-      function tryNextCandidate() {
-        if (candidateIndex < candidates.length) {
-          narrAudio.src = candidates[candidateIndex++];
+      let ptr = 0;
+      function tryNext() {
+        if (ptr < candidates.length) {
+          narrAudio.src = candidates[ptr++];
+        } else {
+          logDiag(`[語音失敗] 第 ${index} 頁在 speech/ 找不到匹配檔案`, false);
         }
       }
 
-      narrAudio.onerror = tryNextCandidate;
-      tryNextCandidate();
+      narrAudio.onerror = tryNext;
+      narrAudio.oncanplay = () => {
+        logDiag(`[語音就緒] 第 ${index} 頁語音: ${narrAudio.src.split('/').slice(-2).join('/')}`, true);
+      };
+      tryNext();
 
       narrAudio.currentTime = 0;
       narrAudio.volume = parseFloat(narrVol.value);
@@ -792,24 +878,33 @@
       }
     }
 
-    /* Smart Music (BGM) Loader (Tries candidates inside music/ folder) */
+    /* 背景音樂探測 (從 music/ 資料夾搜尋) */
     function initBgm() {
-      const bgmCandidates = [
+      const candidates = [
         'music/bgm.mp3',
         'music/music.mp3',
         'music/background.mp3',
         'music/bgm.wav',
-        `${GITHUB_RAW_BASE}music/bgm.mp3`
+        'music/BGM.mp3',
+        'music/1.mp3',
+        'music/01.mp3',
+        `${GITHUB_RAW}music/bgm.mp3`
       ];
 
-      let bgmIndex = 0;
-      function tryNextBgm() {
-        if (bgmIndex < bgmCandidates.length) {
-          bgmAudio.src = bgmCandidates[bgmIndex++];
+      let ptr = 0;
+      function tryNext() {
+        if (ptr < candidates.length) {
+          bgmAudio.src = candidates[ptr++];
+        } else {
+          logDiag(`[背景音樂失敗] 在 music/ 找不到匹配的背景音檔 (需為 bgm.mp3 或 music.mp3 等)`, false);
         }
       }
-      bgmAudio.onerror = tryNextBgm;
-      tryNextBgm();
+
+      bgmAudio.onerror = tryNext;
+      bgmAudio.oncanplay = () => {
+        logDiag(`[背景音樂就緒] ${bgmAudio.src.split('/').slice(-2).join('/')}`, true);
+      };
+      tryNext();
     }
 
     function toggleBgm() {
@@ -824,7 +919,12 @@
       }
     }
 
-    // Event listeners
+    function logDiag(msg, ok) {
+      diagLog.unshift(`<div class="diag-item ${ok ? 'diag-ok' : 'diag-fail'}">${msg}</div>`);
+      diagList.innerHTML = diagLog.join('');
+    }
+
+    /* 監聽事件 */
     prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
     nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
 
@@ -885,6 +985,9 @@
       }
     });
 
+    btnDiagnose.addEventListener('click', () => { diagModal.style.display = 'flex'; });
+    btnCloseDiag.addEventListener('click', () => { diagModal.style.display = 'none'; });
+
     startBtn.addEventListener('click', () => {
       startBackdrop.style.display = 'none';
       bgmAudio.volume = parseFloat(bgmVol.value);
@@ -892,7 +995,6 @@
       playNarration(0);
     });
 
-    setupUIAssets();
     initBgm();
     buildBook();
   </script>
