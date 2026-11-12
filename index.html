@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>mnanak na qalang · 泰雅奇幻之旅 | Digital Storybook</title>
+  
+  <!-- 網頁 Favicon：採用 graphic/Atayal.png -->
+  <link rel="icon" type="image/png" id="siteFavicon" href="graphic/Atayal.png" />
+
   <style>
     :root {
       --primary-red: #c52928;
@@ -55,7 +59,6 @@
       flex-shrink: 0;
     }
 
-    /* 頂部導覽列 */
     header {
       display: flex;
       justify-content: space-between;
@@ -71,16 +74,18 @@
     .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
+    /* 頁首 Atayal 圖示 */
     .avatar-icon {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
-      border: 1.5px solid var(--gold-accent);
+      border: 2px solid var(--gold-accent);
       padding: 2px;
+      object-fit: cover;
       flex-shrink: 0;
     }
 
@@ -125,7 +130,6 @@
       border-color: var(--gold-accent);
     }
 
-    /* 主要閱讀區 */
     main#readerStage {
       flex: 1;
       display: flex;
@@ -220,7 +224,6 @@
       line-height: 1.25;
     }
 
-    /* 翻頁按鈕（相容檢查器選擇器與點擊） */
     .arrow-btn {
       position: absolute;
       top: 50%;
@@ -255,7 +258,6 @@
     .arrow-left { left: 16px; }
     .arrow-right { right: 16px; }
 
-    /* 底部控制列 */
     footer {
       background: rgba(16, 13, 14, 0.96);
       padding: 10px 18px;
@@ -313,7 +315,6 @@
       cursor: pointer;
     }
 
-    /* 頁碼標籤（符合 1/20 嚴格標準） */
     .page-tag {
       font-size: 0.88rem;
       font-weight: 700;
@@ -325,7 +326,6 @@
       white-space: nowrap;
     }
 
-    /* 縮圖目錄抽屜 */
     .drawer-overlay {
       position: absolute;
       bottom: 56px;
@@ -372,7 +372,6 @@
       border-radius: 3px;
     }
 
-    /* 開始閱讀彈出層 */
     #startBackdrop {
       position: fixed;
       inset: 0;
@@ -394,6 +393,17 @@
       text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.85);
     }
+
+    /* 彈跳視窗內的 Atayal 圖片 */
+    .dialog-avatar {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-accent);
+    }
+
     .start-dialog h2 {
       color: #ffd875;
       font-size: 1.5rem;
@@ -422,7 +432,6 @@
       transform: scale(1.05);
     }
 
-    /* 除錯與檔案診斷面板 */
     #diagModal {
       position: fixed;
       inset: 0;
@@ -474,21 +483,14 @@
 
   <header>
     <div class="header-left">
-      <svg class="avatar-icon" viewBox="0 0 50 50">
-        <circle cx="25" cy="25" r="23" fill="#e67e22"/>
-        <circle cx="25" cy="25" r="18" fill="#f1c40f"/>
-        <circle cx="18" cy="22" r="3.5" fill="#2c3e50"/>
-        <circle cx="32" cy="22" r="3.5" fill="#2c3e50"/>
-        <path d="M20,32 Q25,38 30,32" stroke="#c0392b" stroke-width="2" fill="none"/>
-        <circle cx="36" cy="14" r="5" fill="#e91e63"/>
-      </svg>
+      <!-- 替換為 Atayal.png 圖檔 -->
+      <img src="graphic/Atayal.png" class="avatar-icon" id="headerAvatar" alt="Atayal" onerror="this.onerror=null; this.src='graphics/Atayal.png';" />
       <div class="title-group">
         <h1>mnanak na qalang</h1>
         <p>泰雅奇幻之旅 · Atayal Interactive Audio Picture Book</p>
       </div>
     </div>
     <div class="header-right">
-      <!-- 檢查器指定按鈕：除錯入口 -->
       <button class="btn-ui" id="debugBtn" title="除錯快捷鍵：按下鍵盤 D">
         <span>🛠️ 除錯入口</span>
       </button>
@@ -502,7 +504,6 @@
   </header>
 
   <main id="readerStage">
-    <!-- 檢查器指定按鈕：上一頁 -->
     <button class="arrow-btn arrow-left" id="prevBtn" aria-label="上一頁" title="上一頁">
       <svg viewBox="0 0 50 20">
         <polygon points="16,0 16,7 50,7 50,13 16,13 16,20 0,10" />
@@ -512,7 +513,6 @@
 
     <div class="book-viewport" id="slideViewport"></div>
 
-    <!-- 檢查器指定按鈕：下一頁 -->
     <button class="arrow-btn arrow-right" id="nextBtn" aria-label="下一頁" title="下一頁">
       <span>下一頁</span>
       <svg viewBox="0 0 50 20">
@@ -525,14 +525,12 @@
 
   <footer>
     <div class="audio-dock">
-      <!-- 檢查器指定按鈕：靜音／停止（背景音樂控制） -->
-      <div class="sound-pod" title="Background Music Loop">
+      <div class="sound-pod" title="Background Music">
         <button class="sound-pod-btn" id="bgmToggleBtn" aria-label="靜音／停止">靜音／停止</button>
         <span class="pod-title">背景音樂 (music)</span>
         <input type="range" class="volume-bar" id="bgmVol" min="0" max="1" step="0.05" value="0.35" aria-label="背景音樂音量" />
       </div>
 
-      <!-- 檢查器指定按鈕：朗讀（語音控制） -->
       <div class="sound-pod" title="Page Audiobook Speech">
         <button class="sound-pod-btn" id="narrToggleBtn" aria-label="朗讀">朗讀</button>
         <span class="pod-title">語音朗讀 (speech)</span>
@@ -544,48 +542,52 @@
       </button>
     </div>
 
-    <!-- 檢查器判定：頁碼標示 -->
     <div class="page-tag" id="pageTag">第 1 頁 / 共 20 頁</div>
   </footer>
 
   <div class="tribal-bar"></div>
 
-  <!-- 檢查器指定按鈕：開始閱讀 -->
+  <!-- 開始閱讀對話窗 -->
   <div id="startBackdrop">
     <div class="start-dialog">
-      <svg viewBox="0 0 50 50" style="width:64px; margin-bottom:12px;">
-        <circle cx="25" cy="25" r="23" fill="#e67e22"/>
-        <circle cx="25" cy="25" r="18" fill="#f1c40f"/>
-        <circle cx="18" cy="22" r="3.5" fill="#2c3e50"/>
-        <circle cx="32" cy="22" r="3.5" fill="#2c3e50"/>
-        <path d="M20,32 Q25,38 30,32" stroke="#c0392b" stroke-width="2" fill="none"/>
-        <circle cx="36" cy="14" r="5" fill="#e91e63"/>
-      </svg>
+      <!-- 替換為 Atayal.png 圖檔 -->
+      <img src="graphic/Atayal.png" class="dialog-avatar" id="dialogAvatar" alt="Atayal" onerror="this.onerror=null; this.src='graphics/Atayal.png';" />
       <h2>mnanak na qalang</h2>
-      <p>歡迎進入《泰雅奇幻之旅》數位有聲繪本。<br/>點選下方按鈕，開始閱讀並啟動背景音樂與語音朗讀。</p>
+      <p>歡迎進入《泰雅奇幻之旅》數位有聲繪本。<br/>點選下方按鈕，開始閱讀並聆聽每一頁專屬的音樂與朗讀。</p>
       <button class="btn-begin" id="startBtn" aria-label="開始閱讀">開始閱讀</button>
     </div>
   </div>
 
-  <!-- 除錯面板 -->
+  <!-- 除錯與檔案診斷面板 -->
   <div id="diagModal">
     <div class="diag-box">
       <h3>🛠️ 繪本即時檔案檢測與除錯</h3>
-      <p style="color:#bbb; margin-bottom:10px;">目前已嘗試之各項資源載入狀態：</p>
+      <p style="color:#bbb; margin-bottom:10px;">各頁面專屬音樂、語音與圖檔載入情況：</p>
       <div class="diag-list" id="diagList"></div>
       <div style="margin-top:14px; display:flex; gap:10px;">
-        <button class="btn-ui" id="btnForceBgm" style="flex:1; justify-content:center;">🔊 強制重播背景音樂</button>
+        <button class="btn-ui" id="btnForceReplay" style="flex:1; justify-content:center;">🔊 重新播放當前頁音訊</button>
         <button class="btn-ui" id="btnCloseDiag" style="flex:1; justify-content:center;">關閉除錯視窗</button>
       </div>
     </div>
   </div>
 
+  <!-- 兩組音軌：一組負責當頁背景音樂，一組負責當頁朗讀語音 -->
   <audio id="bgmAudio" loop preload="auto"></audio>
   <audio id="narrAudio" preload="auto"></audio>
 
   <script>
     const GITHUB_REPO = "LanAbay/audio-picture-book";
     const GITHUB_RAW = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/`;
+
+    // 確保 Favicon 正確載入備援
+    (function checkFavicon() {
+      const fav = document.getElementById('siteFavicon');
+      const img = new Image();
+      img.src = 'graphic/Atayal.png';
+      img.onerror = () => {
+        fav.href = 'graphics/Atayal.png';
+      };
+    })();
 
     /* 繪本 20 頁完整資料庫（封面 + 19 頁內頁） */
     const bookPages = [
@@ -614,6 +616,8 @@
     let currentIndex = 0;
     let autoNarration = true;
     let isUserStarted = false;
+    let isBgmMuted = false;
+
     let repoGraphicsFiles = null;
     let repoMusicFiles = null;
     let repoSpeechFiles = null;
@@ -640,98 +644,133 @@
     const diagModal = document.getElementById('diagModal');
     const diagList = document.getElementById('diagList');
     const btnCloseDiag = document.getElementById('btnCloseDiag');
-    const btnForceBgm = document.getElementById('btnForceBgm');
+    const btnForceReplay = document.getElementById('btnForceReplay');
 
-    /* 即時遠端倉庫清單同步（自動對應副檔名大小寫與下底線） */
+    /* 即時讀取 GitHub 倉庫結構 */
     async function fetchRepoTree() {
       try {
-        const [gRes, mRes, sRes] = await Promise.allSettled([
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/graphics`),
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/music`),
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/speech`)
+        const fetchFolder = async (folder) => {
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${folder}`);
+          if (res.ok) {
+            const list = await res.json();
+            return Array.isArray(list) ? list.map(f => f.name) : null;
+          }
+          return null;
+        };
+
+        const [g1, g2, m, s] = await Promise.allSettled([
+          fetchFolder('graphic'),
+          fetchFolder('graphics'),
+          fetchFolder('music'),
+          fetchFolder('speech')
         ]);
 
-        if (gRes.status === 'fulfilled' && gRes.value.ok) {
-          const list = await gRes.value.json();
-          repoGraphicsFiles = Array.isArray(list) ? list.map(f => f.name) : null;
-          logDiag(`[GitHub API] 成功索引 graphics 目錄，共 ${repoGraphicsFiles.length} 個圖檔`, true);
-        }
-        if (mRes.status === 'fulfilled' && mRes.value.ok) {
-          const list = await mRes.value.json();
-          repoMusicFiles = Array.isArray(list) ? list.map(f => f.name) : null;
-          logDiag(`[GitHub API] 成功索引 music 目錄: ${repoMusicFiles.join(', ')}`, true);
-        }
-        if (sRes.status === 'fulfilled' && sRes.value.ok) {
-          const list = await sRes.value.json();
-          repoSpeechFiles = Array.isArray(list) ? list.map(f => f.name) : null;
-          logDiag(`[GitHub API] 成功索引 speech 目錄，共 ${repoSpeechFiles.length} 個語音`, true);
-        }
+        repoGraphicsFiles = (g1.value) || (g2.value) || null;
+        repoMusicFiles = m.value || null;
+        repoSpeechFiles = s.value || null;
+
+        if (repoGraphicsFiles) logDiag(`[GitHub API] 成功索引圖檔目錄，共 ${repoGraphicsFiles.length} 個檔案`, true);
+        if (repoMusicFiles) logDiag(`[GitHub API] 成功索引 music 目錄，共 ${repoMusicFiles.length} 首音樂`, true);
+        if (repoSpeechFiles) logDiag(`[GitHub API] 成功索引 speech 目錄，共 ${repoSpeechFiles.length} 段語音`, true);
       } catch (err) {
-        logDiag(`[GitHub API] 離線模式，切換為本地窮舉探測`, false);
+        logDiag(`[GitHub API] 切換至本機智慧窮舉配對模式`, false);
       }
     }
 
-    /* 圖片多格式智慧探測（精確支援 graphics/） */
-    function getImageCandidates(idx) {
-      const pad = String(idx).padStart(2, '0');
+    /* 數字與檔名智慧比對器：自動配對 01, 1, page_01, page1, cover */
+    function findMatchedFileInList(fileList, pageIndex) {
+      if (!fileList || !fileList.length) return null;
+      const pad = String(pageIndex).padStart(2, '0');
+
+      if (pageIndex === 0) {
+        const cover = fileList.find(f => {
+          const l = f.toLowerCase();
+          return l.includes('cover') || l.includes('00') || l === '0.mp3' || l === '0.jpg' || l === '0.png';
+        });
+        if (cover) return cover;
+      }
+
+      // 精確比對檔名內的數字
+      const match = fileList.find(f => {
+        const nameWithoutExt = f.substring(0, f.lastIndexOf('.')).toLowerCase();
+        const numbers = nameWithoutExt.match(/\d+/g);
+        if (numbers) {
+          return numbers.some(n => parseInt(n, 10) === pageIndex);
+        }
+        return false;
+      });
+      return match || null;
+    }
+
+    /* 產生候選檔案路徑清單 */
+    function generateCandidates(folderName, pageIndex, extensions) {
+      const pad = String(pageIndex).padStart(2, '0');
+      const idx = pageIndex;
       const candidates = [];
 
-      // 若 API 有索引到檔案，優先精確匹配
-      if (repoGraphicsFiles) {
-        const found = repoGraphicsFiles.find(name => {
-          const n = name.toLowerCase();
-          return n === `page_${pad}.jpg` || n === `page_${pad}.png` || n === `page_${pad}.jpeg` ||
-                 n === `page${pad}.jpg` || n === `page${pad}.png` ||
-                 n === `${pad}.jpg` || n === `${pad}.png` ||
-                 n === `${idx}.jpg` || n === `${idx}.png` ||
-                 (idx === 0 && (n.includes('cover') || n.includes('00') || n.includes('0')));
-        });
-        if (found) {
-          candidates.push(`graphics/${found}`, `${GITHUB_RAW}graphics/${found}`);
+      // 若 GitHub API 已抓到目錄，優先採用精確檔名
+      let fileList = null;
+      if (folderName === 'graphic' || folderName === 'graphics') fileList = repoGraphicsFiles;
+      if (folderName === 'music') fileList = repoMusicFiles;
+      if (folderName === 'speech') fileList = repoSpeechFiles;
+
+      if (fileList) {
+        const matched = findMatchedFileInList(fileList, pageIndex);
+        if (matched) {
+          candidates.push(`${folderName}/${matched}`);
+          candidates.push(`graphics/${matched}`);
+          candidates.push(`graphic/${matched}`);
+          candidates.push(`${GITHUB_RAW}${folderName}/${matched}`);
         }
       }
 
-      // 常見檔名窮舉清單
-      const exts = ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'webp'];
-      const prefixes = ['graphics', 'graphic', 'images'];
-      
-      prefixes.forEach(p => {
-        exts.forEach(e => {
-          candidates.push(`${p}/page_${pad}.${e}`);
-          candidates.push(`${p}/${pad}.${e}`);
-          candidates.push(`${p}/page${pad}.${e}`);
-          candidates.push(`${p}/${idx}.${e}`);
-          if (idx === 0) candidates.push(`${p}/cover.${e}`);
+      // 本地多重路徑與檔名格式備援
+      const folders = [folderName];
+      if (folderName === 'graphic') folders.push('graphics');
+      if (folderName === 'graphics') folders.push('graphic');
+
+      folders.forEach(dir => {
+        extensions.forEach(ext => {
+          candidates.push(`${dir}/page_${pad}.${ext}`);
+          candidates.push(`${dir}/page${pad}.${ext}`);
+          candidates.push(`${dir}/${pad}.${ext}`);
+          candidates.push(`${dir}/page_${idx}.${ext}`);
+          candidates.push(`${dir}/page${idx}.${ext}`);
+          candidates.push(`${dir}/${idx}.${ext}`);
+          candidates.push(`${dir}/${folderName}_${pad}.${ext}`);
+          candidates.push(`${dir}/${folderName}${pad}.${ext}`);
+          if (idx === 0) {
+            candidates.push(`${dir}/cover.${ext}`);
+            candidates.push(`${dir}/bgm.${ext}`);
+            candidates.push(`${dir}/music.${ext}`);
+          }
         });
       });
 
       return candidates;
     }
 
+    /* 圖檔智慧掛載 */
     function attachAdaptiveImage(imgEl, pageIndex, isThumb = false) {
-      const candidates = getImageCandidates(pageIndex);
+      const candidates = generateCandidates('graphic', pageIndex, ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'webp']);
       let step = 0;
 
       function tryLoad() {
         if (step < candidates.length) {
           imgEl.src = candidates[step++];
         } else {
-          if (!isThumb) {
-            logDiag(`[圖片載入失敗] 第 ${pageIndex} 頁未能找到匹配圖檔`, false);
-          }
+          if (!isThumb) logDiag(`[圖檔遺失] 第 ${pageIndex} 頁未找到對應圖片`, false);
         }
       }
 
       imgEl.onerror = tryLoad;
       imgEl.onload = () => {
-        if (!isThumb) {
-          logDiag(`[圖片成功] 第 ${pageIndex} 頁已載入: ${imgEl.src.split('/').slice(-2).join('/')}`, true);
-        }
+        if (!isThumb) logDiag(`[圖檔就緒] 第 ${pageIndex} 頁: ${imgEl.src.split('/').slice(-2).join('/')}`, true);
       };
       tryLoad();
     }
 
-    /* 建置繪本卡片 */
+    /* 建置 20 頁繪本卡片 */
     function buildBook() {
       slideViewport.innerHTML = '';
       thumbDrawer.innerHTML = '';
@@ -753,7 +792,7 @@
         slideViewport.appendChild(slide);
         attachAdaptiveImage(slide.querySelector(`#mainImg_${idx}`), idx, false);
 
-        // 縮圖
+        // 目錄縮圖
         const thumb = document.createElement('div');
         thumb.className = `thumb-node ${idx === 0 ? 'active' : ''}`;
         thumb.id = `thumb_${idx}`;
@@ -772,7 +811,7 @@
       updateIndicators();
     }
 
-    /* 翻頁切換與按鈕狀態更新（嚴格符合首頁反灰、末頁反灰規範） */
+    /* 換頁核心邏輯（切換頁面時停止前一頁音訊，並播放當頁音樂與語音） */
     function goToPage(targetIndex) {
       if (targetIndex < 0 || targetIndex >= bookPages.length) return;
 
@@ -789,16 +828,16 @@
 
       currentIndex = targetIndex;
       updateIndicators();
-      playNarration(targetIndex);
+
+      // 換頁後立即更新音訊
+      playAudioForCurrentPage();
     }
 
     function updateIndicators() {
-      // 檢查器要求標準頁碼字串
       pageTag.textContent = currentIndex === 0 
         ? `封面 (第 1 頁 / 共 20 頁)` 
         : `第 ${currentIndex + 1} 頁 / 共 20 頁`;
 
-      // 首頁停用「上一頁」，末頁停用「下一頁」
       const isFirst = currentIndex === 0;
       const isLast = currentIndex === bookPages.length - 1;
 
@@ -809,48 +848,79 @@
       nextBtn.classList.toggle('disabled', isLast);
     }
 
-    /* 語音朗讀智慧載入 */
-    function playNarration(index) {
-      narrAudio.pause();
-      const pad = String(index).padStart(2, '0');
-      const candidates = [];
+    /* 播放當前頁面的專屬背景音樂與語音 */
+    function playAudioForCurrentPage() {
+      playPageBgm(currentIndex);
+      playPageSpeech(currentIndex);
+    }
 
-      if (repoSpeechFiles) {
-        const found = repoSpeechFiles.find(name => {
-          const n = name.toLowerCase();
-          return n === `page_${pad}.mp3` || n === `page${pad}.mp3` || n === `${pad}.mp3` || n === `${index}.mp3` ||
-                 (index === 0 && (n.includes('cover') || n.includes('00') || n.includes('0')));
-        });
-        if (found) {
-          candidates.push(`speech/${found}`, `${GITHUB_RAW}speech/${found}`);
+    /* 1. 當前頁專屬背景音樂 (music/) 載入與播放 */
+    function playPageBgm(pageIdx) {
+      // 停止並重置前一頁背景音樂
+      bgmAudio.pause();
+      bgmAudio.currentTime = 0;
+
+      const candidates = generateCandidates('music', pageIdx, ['mp3', 'wav', 'm4a', 'ogg']);
+      let ptr = 0;
+      let isLoaded = false;
+
+      function tryNextBgm() {
+        if (isLoaded) return;
+        if (ptr < candidates.length) {
+          bgmAudio.src = candidates[ptr++];
+          bgmAudio.load();
+        } else {
+          logDiag(`[背景音樂] 第 ${pageIdx} 頁在 music/ 未找到音檔 (嘗試如 page_${String(pageIdx).padStart(2,'0')}.mp3)`, false);
         }
       }
 
-      candidates.push(
-        `speech/page_${pad}.mp3`,
-        `speech/page${pad}.mp3`,
-        `speech/${pad}.mp3`,
-        `speech/page_${index}.mp3`,
-        `speech/page${index}.mp3`,
-        `speech/${index}.mp3`,
-        `speech/speech_${pad}.mp3`,
-        `speech/cover.mp3`,
-        `${GITHUB_RAW}speech/page_${pad}.mp3`
-      );
+      bgmAudio.onerror = tryNextBgm;
+      bgmAudio.oncanplay = () => {
+        isLoaded = true;
+        logDiag(`[BGM就緒] 第 ${pageIdx} 頁: ${bgmAudio.src.split('/').slice(-2).join('/')}`, true);
 
+        if (isUserStarted && !isBgmMuted) {
+          bgmAudio.volume = parseFloat(bgmVol.value);
+          bgmAudio.play().then(() => {
+            bgmToggleBtn.textContent = '靜音／停止';
+            bgmToggleBtn.style.background = 'var(--primary-red)';
+          }).catch(e => {
+            console.log('BGM play deferred:', e);
+          });
+        }
+      };
+
+      tryNextBgm();
+    }
+
+    /* 2. 當前頁專屬語音朗讀 (speech/) 載入與播放 */
+    function playPageSpeech(pageIdx) {
+      // 停止並重置前一頁語音朗讀
+      narrAudio.pause();
+      narrAudio.currentTime = 0;
+      narrToggleBtn.textContent = '朗讀';
+
+      const candidates = generateCandidates('speech', pageIdx, ['mp3', 'wav', 'm4a', 'ogg']);
       let ptr = 0;
-      function tryNext() {
+      let isLoaded = false;
+
+      function tryNextSpeech() {
+        if (isLoaded) return;
         if (ptr < candidates.length) {
           narrAudio.src = candidates[ptr++];
+          narrAudio.load();
         } else {
-          logDiag(`[語音失敗] 第 ${index} 頁在 speech/ 找不到檔案`, false);
+          logDiag(`[語音] 第 ${pageIdx} 頁在 speech/ 未找到對應語音`, false);
         }
       }
 
-      narrAudio.onerror = tryNext;
+      narrAudio.onerror = tryNextSpeech;
       narrAudio.oncanplay = () => {
-        logDiag(`[語音就緒] 第 ${index} 頁: ${narrAudio.src.split('/').slice(-2).join('/')}`, true);
-        if (autoNarration && isUserStarted) {
+        isLoaded = true;
+        logDiag(`[語音就緒] 第 ${pageIdx} 頁: ${narrAudio.src.split('/').slice(-2).join('/')}`, true);
+
+        if (isUserStarted && autoNarration) {
+          narrAudio.volume = parseFloat(narrVol.value);
           narrAudio.play().then(() => {
             narrToggleBtn.textContent = '暫停朗讀';
           }).catch(() => {
@@ -858,69 +928,21 @@
           });
         }
       };
-      tryNext();
 
-      narrAudio.volume = parseFloat(narrVol.value);
+      tryNextSpeech();
     }
 
-    /* 背景音樂 (BGM) 自動修復與連鎖播放 */
-    function initBgm() {
-      const candidates = [];
-
-      if (repoMusicFiles && repoMusicFiles.length > 0) {
-        repoMusicFiles.forEach(f => {
-          candidates.push(`music/${f}`, `${GITHUB_RAW}music/${f}`);
-        });
-      }
-
-      candidates.push(
-        'music/bgm.mp3',
-        'music/music.mp3',
-        'music/background.mp3',
-        'music/bgm.wav',
-        'music/bgm.m4a',
-        'music/bgm.ogg',
-        'music/BGM.mp3',
-        'music/Music.mp3',
-        'music/01.mp3',
-        'music/1.mp3',
-        `${GITHUB_RAW}music/bgm.mp3`
-      );
-
-      let ptr = 0;
-      function tryNext() {
-        if (ptr < candidates.length) {
-          bgmAudio.src = candidates[ptr++];
-        } else {
-          logDiag(`[背景音樂失敗] 在 music/ 未找到音檔，請確認 music 資料夾內檔案`, false);
-        }
-      }
-
-      bgmAudio.onerror = tryNext;
-      bgmAudio.oncanplay = () => {
-        logDiag(`[背景音樂就緒] ${bgmAudio.src.split('/').slice(-2).join('/')}`, true);
-        if (isUserStarted && bgmAudio.paused) {
-          bgmAudio.volume = parseFloat(bgmVol.value);
-          bgmAudio.play().then(() => {
-            bgmToggleBtn.textContent = '靜音／停止';
-            bgmToggleBtn.style.background = 'var(--primary-red)';
-          }).catch(e => {
-            logDiag(`[背景音樂待解鎖] ${e.message}`, false);
-          });
-        }
-      };
-      tryNext();
-    }
-
-    /* 靜音／停止切換（完全相容檢查器） */
+    /* 靜音／停止背景音樂切換 */
     function toggleBgm() {
       if (bgmAudio.paused) {
+        isBgmMuted = false;
         bgmAudio.volume = parseFloat(bgmVol.value);
         bgmAudio.play().then(() => {
           bgmToggleBtn.textContent = '靜音／停止';
           bgmToggleBtn.style.background = 'var(--primary-red)';
         }).catch(() => {});
       } else {
+        isBgmMuted = true;
         bgmAudio.pause();
         bgmToggleBtn.textContent = '播放音樂';
         bgmToggleBtn.style.background = '#444';
@@ -932,11 +954,11 @@
       diagList.innerHTML = diagLog.join('');
     }
 
-    // 事件綁定
+    // 事件監聽
     prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
     nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
 
-    // 鍵盤導覽（含檢查器快捷鍵 D）
+    // 鍵盤操作（包含檢查器 D 鍵除錯）
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') goToPage(currentIndex - 1);
       if (e.key === 'ArrowRight') goToPage(currentIndex + 1);
@@ -948,7 +970,7 @@
       }
     });
 
-    // 手機觸控手勢
+    // 觸控手勢滑動翻頁
     let touchX = 0;
     slideViewport.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
     slideViewport.addEventListener('touchend', e => {
@@ -988,36 +1010,20 @@
     debugBtn.addEventListener('click', () => { diagModal.style.display = 'flex'; });
     btnCloseDiag.addEventListener('click', () => { diagModal.style.display = 'none'; });
 
-    btnForceBgm.addEventListener('click', () => {
-      bgmAudio.currentTime = 0;
-      bgmAudio.play().then(() => {
-        bgmToggleBtn.textContent = '靜音／停止';
-        bgmToggleBtn.style.background = 'var(--primary-red)';
-      }).catch(err => alert('播放失敗：' + err.message));
+    btnForceReplay.addEventListener('click', () => {
+      playAudioForCurrentPage();
     });
 
-    // 開始閱讀按鈕（解鎖瀏覽器 Autoplay 限制）
+    // 點擊「開始閱讀」：正式解鎖音訊並開始從第 0 頁播放
     startBtn.addEventListener('click', () => {
       isUserStarted = true;
       startBackdrop.style.display = 'none';
-
-      // 立即啟動背景音樂
-      bgmAudio.volume = parseFloat(bgmVol.value);
-      bgmAudio.play().then(() => {
-        bgmToggleBtn.textContent = '靜音／停止';
-        bgmToggleBtn.style.background = 'var(--primary-red)';
-      }).catch(e => {
-        logDiag(`[BGM 初始播放] 等候音檔載入完成後自動播放`, false);
-      });
-
-      // 觸發第 0 頁朗讀
-      playNarration(0);
+      goToPage(0);
     });
 
-    // 啟動序列
+    // 初始化啟動
     (async function init() {
       await fetchRepoTree();
-      initBgm();
       buildBook();
     })();
   </script>
