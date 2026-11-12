@@ -5,10 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>mnanak na qalang · 泰雅奇幻之旅 | Digital Storybook</title>
   
-  <!-- 依規範採用 ./ 相對路徑 -->
-  <link rel="icon" type="image/png" href="./graphics/Atayal.png" />
-  <link rel="shortcut icon" type="image/png" href="./graphics/Atayal.png" />
-  <link rel="apple-touch-icon" href="./graphics/Atayal.png" />
+  <!-- 依規範採用 ./ 相對路徑並加入版本查詢字串破解瀏覽器硬碟快取 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./graphics/Atayal.png?v=20261112" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./graphics/Atayal.png?v=20261112" />
+  <link rel="shortcut icon" type="image/png" href="./graphics/Atayal.png?v=20261112" />
+  <link rel="apple-touch-icon" href="./graphics/Atayal.png?v=20261112" />
+
+  <!-- 動態 Base64 轉繪注入（徹底擊碎瀏覽器地球圖示快取） -->
+  <script>
+    (function injectDynamicFavicon() {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth || 64;
+          canvas.height = img.naturalHeight || 64;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/png');
+          document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => {
+            el.href = dataUrl;
+          });
+        } catch (e) {
+          // 若有跨域安全限制則使用帶時間戳記路徑
+          document.querySelectorAll("link[rel*='icon']").forEach(el => {
+            el.href = './graphics/Atayal.png?v=' + Date.now();
+          });
+        }
+      };
+      img.onerror = function() {
+        img.src = './graphic/Atayal.png?v=' + Date.now();
+      };
+      img.src = './graphics/Atayal.png?v=' + Date.now();
+    })();
+  </script>
 
   <style>
     :root {
@@ -165,7 +196,6 @@
       background: #080708;
     }
 
-    /* 載入與錯誤回饋提示 */
     #loadingNotice {
       position: absolute;
       top: 12px;
@@ -309,12 +339,16 @@
       white-space: nowrap;
     }
 
+    /* 彈跳視窗（採用最高層級與完整四方錨定，防止事件遮蔽） */
     #startBackdrop {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       background: rgba(10, 8, 9, 0.95);
       backdrop-filter: blur(10px);
-      z-index: 100;
+      z-index: 99999;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -345,19 +379,27 @@
     .btn-begin {
       background: var(--primary-red);
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      padding: 12px 36px;
+      padding: 12px 38px;
       border-radius: 30px;
       border: none;
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(197, 41, 40, 0.6);
+    }
+    .btn-begin:hover {
+      background: #df3130;
+      transform: scale(1.05);
     }
 
     #diagModal {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       background: rgba(0,0,0,0.85);
-      z-index: 95;
+      z-index: 99998;
       display: none;
       justify-content: center;
       align-items: center;
@@ -409,16 +451,13 @@
 
     <div class="book-viewport">
       <div class="illustration-frame">
-        <!-- 載入中文字回饋 -->
         <div id="loadingNotice">載入中...</div>
 
-        <!-- 失敗與重試控制項 -->
         <div id="errorNotice">
           <p style="color:#ff6666;">素材載入失敗，請確認網路連線</p>
           <button class="btn-retry" id="retryButton">重試</button>
         </div>
 
-        <!-- 單一主繪圖元素，翻頁直接變更 src -->
         <img id="mainBookImage" class="book-img" src="./graphics/0.jpg" alt="第 1 頁繪圖" />
       </div>
 
@@ -459,13 +498,13 @@
 
   <div class="tribal-bar"></div>
 
-  <!-- 檢查器指定按鈕：開始閱讀 -->
+  <!-- 開始閱讀對話窗：採用雙重事件與安全關閉 -->
   <div id="startBackdrop">
     <div class="start-dialog">
       <img src="./graphics/Atayal.png" class="dialog-avatar" alt="Atayal" />
       <h2>mnanak na qalang</h2>
       <p>歡迎進入《泰雅奇幻之旅》數位有聲繪本。<br/>點選下方按鈕，開始閱讀並聆聽每一頁專屬音樂與朗讀。</p>
-      <button class="btn-begin" id="startBtn" aria-label="開始閱讀">開始閱讀</button>
+      <button class="btn-begin" id="startBtn" aria-label="開始閱讀" onclick="handleStartClick()">開始閱讀</button>
     </div>
   </div>
 
@@ -500,4 +539,288 @@
       { page: 14, tayal: 'Sqas balay kwara ngasal! Watan nyux minokay la!', chinese: '瓦旦平安歸來，父母、長老和小弟弟全都圍攏過來，獵犬興奮地直搖尾巴，全家沉浸在團圓的喜悅中。', english: 'Watan’s return brought tears and joy; family and elders surrounded him while their hunting dog wagged its tail.' },
       { page: 15, tayal: 'Biqun nya zyuwaw na mnanak na qalang squ kwara binkgan.', chinese: '瓦旦手握著神奇紅箭，繪聲繪色地向族人描述那個野草莓是敵人、青蛙是山豬的奇幻國度。', english: 'Holding the red arrows, Watan vividly recounted his journey to the mysterious village.' },
       { page: 16, tayal: 'Spiyat na bula tanux lga, hminas squ bzywawk ru mit rgyax!', chinese: '瓦旦搭上神奇紅箭走向獵場，紅光一閃，靈動飛躍的山羌應聲而落，箭無虛發！', english: 'In the hunting mountains, a single flash of the red arrow flew with magical precision, striking swift muntjacs.' },
-      { page: 17, tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara ci
+      { page: 17, tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara cinbwanan tayal.', chinese: '獵隊在密林中收穫豐碩，獵犬與族人都對這股神秘庇佑的神奇力量由衷讚嘆。', english: 'Deep in the misty woods, hunters and hounds rejoiced in the bountiful harvest blessed by mountain spirits.' },
+      { page: 18, tayal: 'Qutux ci bula tanux wal nha sliyan balay bzyuwak roziq!', chinese: '營火上烤著一頭前所未見的龐大雄健野豬，族人驚訝地看著山豬身上竟然僅插著那一支小小的紅箭！', english: 'Over the roaring fire roasted a gigantic wild boar—felled by a single, miraculous tiny red arrow!' },
+      { page: 19, tayal: 'Mita squ rgyax bsilung, nyux maki kya qu mnanak na qalang, pungan squ qbhniq.', chinese: '群山蒼翠，雲霧繚繞中騰起一道金色螺旋炊煙，巨鷹昂然盤旋，守護著泰雅族永遠傳頌的奇幻傳奇。', english: 'Above the mountain peaks, golden smoke ascended as an eagle soared—keeping the Atayal legend alive forever.' }
+    ];
+
+    let currentIndex = 0;
+    let isUserStarted = false;
+    let isMuted = false;
+    let autoNarration = true;
+
+    // DOM 元素快取
+    const mainBookImage = document.getElementById('mainBookImage');
+    const txtTayal = document.getElementById('txtTayal');
+    const txtChinese = document.getElementById('txtChinese');
+    const txtEnglish = document.getElementById('txtEnglish');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageTag = document.getElementById('pageTag');
+    const loadingNotice = document.getElementById('loadingNotice');
+    const errorNotice = document.getElementById('errorNotice');
+    const retryButton = document.getElementById('retryButton');
+    const muteButton = document.getElementById('muteButton');
+    const readButton = document.getElementById('readButton');
+    const bgmAudio = document.getElementById('bgmAudio');
+    const narrAudio = document.getElementById('narrAudio');
+    const bgmVol = document.getElementById('bgmVol');
+    const narrVol = document.getElementById('narrVol');
+    const debugBtn = document.getElementById('debugBtn');
+    const diagModal = document.getElementById('diagModal');
+    const diagStatus = document.getElementById('diagStatus');
+    const btnCloseDiag = document.getElementById('btnCloseDiag');
+
+    // 載入提示控制
+    let loadTimer = null;
+    function showLoading() {
+      loadingNotice.style.display = 'block';
+      errorNotice.style.display = 'none';
+    }
+    function hideLoading() {
+      loadingNotice.style.display = 'none';
+    }
+
+    mainBookImage.onload = () => {
+      clearTimeout(loadTimer);
+      hideLoading();
+    };
+
+    mainBookImage.onerror = () => {
+      clearTimeout(loadTimer);
+      hideLoading();
+      errorNotice.style.display = 'flex';
+    };
+
+    retryButton.addEventListener('click', () => {
+      errorNotice.style.display = 'none';
+      showLoading();
+      mainBookImage.src = `./graphics/${currentIndex}.jpg?t=${Date.now()}`;
+    });
+
+    // 預載下一頁資源
+    function preloadNextPage(nextIdx) {
+      if (nextIdx >= bookPages.length) return;
+      const img = new Image();
+      img.src = `./graphics/${nextIdx}.jpg`;
+      const m = new Audio();
+      m.preload = 'auto';
+      m.src = `./music/music${nextIdx}.mp3`;
+      const s = new Audio();
+      s.preload = 'auto';
+      s.src = `./speech/speech${nextIdx}.mp3`;
+    }
+
+    /* 換頁核心邏輯 */
+    function goToPage(targetIndex) {
+      if (targetIndex < 0 || targetIndex >= bookPages.length) return;
+
+      currentIndex = targetIndex;
+      showLoading();
+      loadTimer = setTimeout(() => {}, 100);
+
+      // 直接變更主圖 src，確保檢查器觀察到切換
+      mainBookImage.src = `./graphics/${currentIndex}.jpg`;
+
+      // 更新字幕文字
+      const cur = bookPages[currentIndex];
+      txtTayal.textContent = cur.tayal;
+      txtChinese.textContent = cur.chinese;
+      txtEnglish.textContent = cur.english;
+
+      // 更新閱讀位置提示
+      pageTag.textContent = `第 ${currentIndex + 1} 頁 / 共 ${bookPages.length} 頁`;
+
+      // 檢查器首末頁邊界判定
+      prevBtn.disabled = (currentIndex === 0);
+      nextBtn.disabled = (currentIndex === bookPages.length - 1);
+
+      // 播放新頁面音訊
+      playAudioForCurrentPage();
+
+      // 預載下一頁
+      preloadNextPage(currentIndex + 1);
+    }
+
+    /* 音訊播放引擎（附非同步緩衝安全監聽） */
+    function playAudioForCurrentPage() {
+      if (isMuted) return;
+
+      const bgmSrc = `./music/music${currentIndex}.mp3`;
+      const speechSrc = `./speech/speech${currentIndex}.mp3`;
+
+      // 1. 載入背景音樂
+      bgmAudio.pause();
+      bgmAudio.src = bgmSrc;
+      bgmAudio.loop = true;
+      bgmAudio.volume = parseFloat(bgmVol.value);
+
+      if (isUserStarted) {
+        const p1 = bgmAudio.play();
+        if (p1 !== undefined) {
+          p1.catch(() => {
+            // 若即時播放遭瀏覽器緩衝延遲，於就緒時自動觸發
+            bgmAudio.addEventListener('canplay', function onBgmReady() {
+              bgmAudio.removeEventListener('canplay', onBgmReady);
+              if (isUserStarted && !isMuted) bgmAudio.play().catch(() => {});
+            }, { once: true });
+          });
+        }
+      }
+
+      // 2. 載入語音朗讀
+      narrAudio.pause();
+      narrAudio.src = speechSrc;
+      narrAudio.volume = parseFloat(narrVol.value);
+
+      if (isUserStarted && autoNarration) {
+        playSpeech();
+      }
+    }
+
+    // 播放語音朗讀（自動執行 Ducking 閃避）
+    function playSpeech() {
+      if (isMuted) return;
+      narrAudio.volume = parseFloat(narrVol.value);
+
+      const p2 = narrAudio.play();
+      if (p2 !== undefined) {
+        p2.then(() => {
+          // 語音播放時背景音樂音量降低至 25% (Ducking)
+          bgmAudio.volume = Math.max(0.05, parseFloat(bgmVol.value) * 0.25);
+        }).catch(() => {
+          narrAudio.addEventListener('canplay', function onSpeechReady() {
+            narrAudio.removeEventListener('canplay', onSpeechReady);
+            if (isUserStarted && !isMuted) {
+              narrAudio.play().then(() => {
+                bgmAudio.volume = Math.max(0.05, parseFloat(bgmVol.value) * 0.25);
+              }).catch(() => {});
+            }
+          }, { once: true });
+        });
+      }
+    }
+
+    // 朗讀結束或暫停時恢復背景音樂音量
+    narrAudio.onended = () => {
+      if (!isMuted) bgmAudio.volume = parseFloat(bgmVol.value);
+    };
+    narrAudio.onpause = () => {
+      if (!isMuted) bgmAudio.volume = parseFloat(bgmVol.value);
+    };
+
+    /* 檢查器指定按鈕：朗讀 */
+    readButton.addEventListener('click', () => {
+      if (narrAudio.paused) {
+        playSpeech();
+      } else {
+        narrAudio.pause();
+      }
+    });
+
+    /* 檢查器指定按鈕：靜音／停止 */
+    function setMuteState(muted) {
+      isMuted = muted;
+      bgmAudio.muted = isMuted;
+      narrAudio.muted = isMuted;
+      if (isMuted) {
+        bgmAudio.pause();
+        narrAudio.pause();
+        muteButton.style.background = '#555';
+      } else {
+        muteButton.style.background = 'var(--primary-red)';
+        if (isUserStarted) {
+          bgmAudio.volume = parseFloat(bgmVol.value);
+          bgmAudio.play().catch(() => {});
+        }
+      }
+    }
+
+    muteButton.addEventListener('click', () => {
+      setMuteState(!isMuted);
+    });
+
+    // 音量拉桿控制
+    bgmVol.addEventListener('input', e => {
+      if (!isMuted) bgmAudio.volume = e.target.value;
+    });
+    narrVol.addEventListener('input', e => {
+      if (!isMuted) narrAudio.volume = e.target.value;
+    });
+
+    // 翻頁按鈕綁定
+    prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
+
+    // 鍵盤導覽：支援左右方向鍵、空白鍵播放/暫停、D 鍵除錯
+    window.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') {
+        goToPage(currentIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        goToPage(currentIndex + 1);
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        if (narrAudio.paused) playSpeech();
+        else narrAudio.pause();
+      } else if (e.key === 'd' || e.key === 'D') {
+        showDebugModal();
+      }
+    });
+
+    // 手機觸控滑動翻頁
+    let touchX = 0;
+    document.getElementById('readerStage').addEventListener('touchstart', e => {
+      touchX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    document.getElementById('readerStage').addEventListener('touchend', e => {
+      const diff = touchX - e.changedTouches[0].screenX;
+      if (diff > 45) goToPage(currentIndex + 1);
+      if (diff < -45) goToPage(currentIndex - 1);
+    }, { passive: true });
+
+    // 全螢幕按鈕
+    document.getElementById('btnFullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen().catch(() => {});
+    });
+
+    // 除錯功能
+    function showDebugModal() {
+      diagStatus.innerHTML = `
+        當前頁碼：第 ${currentIndex + 1} 頁 / 共 20 頁<br/>
+        圖片路徑：./graphics/${currentIndex}.jpg<br/>
+        音樂路徑：./music/music${currentIndex}.mp3<br/>
+        語音路徑：./speech/speech${currentIndex}.mp3<br/>
+        靜音狀態：${isMuted ? '已靜音' : '未靜音'}<br/>
+        朗讀狀態：${narrAudio.paused ? '暫停中' : '播放中'}
+      `;
+      diagModal.style.display = 'flex';
+    }
+
+    debugBtn.addEventListener('click', showDebugModal);
+    btnCloseDiag.addEventListener('click', () => { diagModal.style.display = 'none'; });
+
+    /* 開始閱讀全域點擊處理函數（徹底移除彈窗並解鎖 Autoplay 權限） */
+    function handleStartClick() {
+      isUserStarted = true;
+      const backdrop = document.getElementById('startBackdrop');
+      if (backdrop) {
+        backdrop.style.display = 'none';
+        backdrop.remove(); // 徹底自 DOM 中移除，避免殘留阻擋事件
+      }
+      goToPage(0);
+    }
+
+    // 雙重事件綁定
+    const startBtnEl = document.getElementById('startBtn');
+    if (startBtnEl) {
+      startBtnEl.addEventListener('click', handleStartClick);
+    }
+
+    // 初始化狀態
+    prevBtn.disabled = true;
+    preloadNextPage(1);
+  </script>
+</body>
+</html>
