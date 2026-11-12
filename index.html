@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>mnanak na qalang · 泰雅奇幻之旅 | Digital Storybook</title>
   
-  <!-- 網頁 Favicon：採用 graphic/Atayal.png -->
-  <link rel="icon" type="image/png" id="siteFavicon" href="graphic/Atayal.png" />
+  <!-- 依規範採用 ./ 相對路徑 -->
+  <link rel="icon" type="image/png" href="./graphics/Atayal.png" />
+  <link rel="shortcut icon" type="image/png" href="./graphics/Atayal.png" />
+  <link rel="apple-touch-icon" href="./graphics/Atayal.png" />
 
   <style>
     :root {
@@ -39,7 +41,6 @@
       position: relative;
     }
 
-    /* 泰雅族傳統菱形幾何飾條 */
     .tribal-bar {
       height: 14px;
       width: 100%;
@@ -77,10 +78,9 @@
       gap: 12px;
     }
 
-    /* 頁首 Atayal 圖示 */
     .avatar-icon {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
       border: 2px solid var(--gold-accent);
@@ -92,7 +92,6 @@
     .title-group h1 {
       font-size: 1.1rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
       color: #ffd875;
     }
     .title-group p {
@@ -123,12 +122,6 @@
       background: var(--primary-red);
       border-color: var(--primary-red);
     }
-    .btn-ui.active {
-      background: var(--gold-accent);
-      color: #1a1617;
-      font-weight: 700;
-      border-color: var(--gold-accent);
-    }
 
     main#readerStage {
       flex: 1;
@@ -147,29 +140,9 @@
       height: 100%;
       max-height: 640px;
       display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .page-slide {
-      position: absolute;
-      inset: 0;
-      display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.97) translateX(30px);
-      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-      pointer-events: none;
-    }
-
-    .page-slide.active {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1) translateX(0);
-      pointer-events: auto;
     }
 
     .illustration-frame {
@@ -185,11 +158,47 @@
       align-items: center;
     }
 
-    .illustration-frame img {
+    .illustration-frame img#mainBookImage {
       width: 100%;
       height: 100%;
       object-fit: contain;
       background: #080708;
+    }
+
+    /* 載入與錯誤回饋提示 */
+    #loadingNotice {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #ffd875;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      display: none;
+      z-index: 10;
+    }
+
+    #errorNotice {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 16, 18, 0.95);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .btn-retry {
+      background: var(--primary-red);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .caption-card {
@@ -207,22 +216,9 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
-    .txt-atayal {
-      font-size: 0.95rem;
-      color: #ffe082;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-    .txt-chinese {
-      font-size: 0.92rem;
-      color: #f1f1f1;
-      line-height: 1.35;
-    }
-    .txt-english {
-      font-size: 0.8rem;
-      color: #aba298;
-      line-height: 1.25;
-    }
+    .txt-atayal { font-size: 0.95rem; color: #ffe082; font-weight: 600; line-height: 1.35; }
+    .txt-chinese { font-size: 0.92rem; color: #f1f1f1; line-height: 1.35; }
+    .txt-english { font-size: 0.8rem; color: #aba298; line-height: 1.25; }
 
     .arrow-btn {
       position: absolute;
@@ -239,20 +235,18 @@
       gap: 8px;
       cursor: pointer;
       z-index: 20;
-      transition: all 0.2s ease;
       font-size: 0.85rem;
       font-weight: bold;
+      transition: all 0.2s ease;
     }
     .arrow-btn:hover:not(:disabled) {
       background: rgba(197, 41, 40, 0.95);
       border-color: #ffd875;
       transform: translateY(-50%) scale(1.08);
-      box-shadow: 0 0 16px rgba(197, 41, 40, 0.8);
     }
-    .arrow-btn:disabled, .arrow-btn.disabled {
+    .arrow-btn:disabled, .arrow-btn[disabled] {
       opacity: 0.25;
       cursor: not-allowed;
-      border-color: rgba(255, 255, 255, 0.1);
     }
     .arrow-btn svg { width: 20px; height: 14px; fill: currentColor; }
     .arrow-left { left: 16px; }
@@ -286,30 +280,19 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .sound-pod-btn {
+    .control-btn {
       background: var(--primary-red);
       color: #fff;
       border: none;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 14px;
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: bold;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: transform 0.15s ease;
-    }
-    .sound-pod-btn:hover { transform: scale(1.05); }
-
-    .pod-title {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #e0d5c8;
     }
 
     .volume-bar {
-      width: 55px;
+      width: 50px;
       height: 4px;
       accent-color: var(--gold-accent);
       cursor: pointer;
@@ -324,52 +307,6 @@
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.15);
       white-space: nowrap;
-    }
-
-    .drawer-overlay {
-      position: absolute;
-      bottom: 56px;
-      left: 0;
-      width: 100%;
-      background: rgba(14, 11, 12, 0.98);
-      border-top: 2px solid var(--primary-red);
-      padding: 12px 16px;
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      z-index: 40;
-      transform: translateY(115%);
-      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-      box-shadow: 0 -12px 30px rgba(0,0,0,0.8);
-    }
-    .drawer-overlay.open { transform: translateY(0); }
-
-    .thumb-node {
-      flex: 0 0 92px;
-      height: 64px;
-      border-radius: 6px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid transparent;
-      opacity: 0.65;
-      transition: all 0.2s ease;
-      position: relative;
-      background: #000;
-    }
-    .thumb-node:hover, .thumb-node.active {
-      opacity: 1;
-      border-color: var(--gold-accent);
-      transform: scale(1.06);
-    }
-    .thumb-node img { width: 100%; height: 100%; object-fit: cover; }
-    .thumb-node span {
-      position: absolute;
-      bottom: 2px;
-      right: 3px;
-      font-size: 0.65rem;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 1px 4px;
-      border-radius: 3px;
     }
 
     #startBackdrop {
@@ -391,10 +328,8 @@
       padding: 30px;
       max-width: 440px;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
     }
 
-    /* 彈跳視窗內的 Atayal 圖片 */
     .dialog-avatar {
       width: 72px;
       height: 72px;
@@ -404,17 +339,9 @@
       border: 2px solid var(--gold-accent);
     }
 
-    .start-dialog h2 {
-      color: #ffd875;
-      font-size: 1.5rem;
-      margin-bottom: 6px;
-    }
-    .start-dialog p {
-      font-size: 0.9rem;
-      color: #ded1c4;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
+    .start-dialog h2 { color: #ffd875; font-size: 1.5rem; margin-bottom: 6px; }
+    .start-dialog p { font-size: 0.9rem; color: #ded1c4; line-height: 1.5; margin-bottom: 20px; }
+    
     .btn-begin {
       background: var(--primary-red);
       color: #fff;
@@ -424,12 +351,6 @@
       border-radius: 30px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(197, 41, 40, 0.6);
-      transition: all 0.2s ease;
-    }
-    .btn-begin:hover {
-      background: #df3130;
-      transform: scale(1.05);
     }
 
     #diagModal {
@@ -446,34 +367,17 @@
       background: #1c181a;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 12px;
-      max-width: 600px;
+      max-width: 500px;
       width: 100%;
       padding: 22px;
-      max-height: 82vh;
-      overflow-y: auto;
-      font-size: 0.85rem;
     }
-    .diag-box h3 { color: var(--gold-accent); margin-bottom: 8px; }
-    .diag-list {
-      background: #0a0809;
-      padding: 10px;
-      border-radius: 6px;
-      font-family: monospace;
-      font-size: 0.78rem;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    .diag-item { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #222; }
-    .diag-ok { color: #55ff55; }
-    .diag-fail { color: #ff6666; }
 
     @media (max-width: 768px) {
       .title-group h1 { font-size: 0.98rem; }
       .title-group p { display: none; }
-      .arrow-btn { padding: 0 12px; height: 44px; font-size: 0.78rem; }
+      .arrow-btn { padding: 0 10px; height: 44px; font-size: 0.78rem; }
       .illustration-frame { height: 65%; }
-      .caption-card { max-height: 110px; font-size: 0.82rem; }
-      .volume-bar { width: 40px; }
+      .caption-card { max-height: 110px; }
     }
   </style>
 </head>
@@ -483,113 +387,101 @@
 
   <header>
     <div class="header-left">
-      <!-- 替換為 Atayal.png 圖檔 -->
-      <img src="graphic/Atayal.png" class="avatar-icon" id="headerAvatar" alt="Atayal" onerror="this.onerror=null; this.src='graphics/Atayal.png';" />
+      <img src="./graphics/Atayal.png" class="avatar-icon" id="headerAvatar" alt="Atayal" />
       <div class="title-group">
         <h1>mnanak na qalang</h1>
         <p>泰雅奇幻之旅 · Atayal Interactive Audio Picture Book</p>
       </div>
     </div>
     <div class="header-right">
-      <button class="btn-ui" id="debugBtn" title="除錯快捷鍵：按下鍵盤 D">
-        <span>🛠️ 除錯入口</span>
-      </button>
-      <button class="btn-ui" id="btnThumbnails" title="切換目錄">
-        <span>📑 目錄</span>
-      </button>
-      <button class="btn-ui" id="btnFullscreen" title="全螢幕切換">
-        <span>⛶ 全螢幕</span>
-      </button>
+      <!-- 檢查器指定按鈕：除錯入口 -->
+      <button class="btn-ui" id="debugBtn" aria-label="除錯入口">除錯入口</button>
+      <button class="btn-ui" id="btnFullscreen" title="全螢幕切換">⛶ 全螢幕</button>
     </div>
   </header>
 
   <main id="readerStage">
+    <!-- 檢查器指定按鈕：上一頁 -->
     <button class="arrow-btn arrow-left" id="prevBtn" aria-label="上一頁" title="上一頁">
-      <svg viewBox="0 0 50 20">
-        <polygon points="16,0 16,7 50,7 50,13 16,13 16,20 0,10" />
-      </svg>
+      <svg viewBox="0 0 50 20"><polygon points="16,0 16,7 50,7 50,13 16,13 16,20 0,10" /></svg>
       <span>上一頁</span>
     </button>
 
-    <div class="book-viewport" id="slideViewport"></div>
+    <div class="book-viewport">
+      <div class="illustration-frame">
+        <!-- 載入中文字回饋 -->
+        <div id="loadingNotice">載入中...</div>
 
+        <!-- 失敗與重試控制項 -->
+        <div id="errorNotice">
+          <p style="color:#ff6666;">素材載入失敗，請確認網路連線</p>
+          <button class="btn-retry" id="retryButton">重試</button>
+        </div>
+
+        <!-- 單一主繪圖元素，翻頁直接變更 src -->
+        <img id="mainBookImage" class="book-img" src="./graphics/0.jpg" alt="第 1 頁繪圖" />
+      </div>
+
+      <div class="caption-card">
+        <div class="txt-atayal" id="txtTayal">mnanak na qalang · Drawings by Zirong Chou</div>
+        <div class="txt-chinese" id="txtChinese">【封面】mnanak na qalang 泰雅奇幻之旅 · 繪圖：周子蓉</div>
+        <div class="txt-english" id="txtEnglish">mnanak na qalang (The Miraculous Village) · Illustrated by Zirong Chou</div>
+      </div>
+    </div>
+
+    <!-- 檢查器指定按鈕：下一頁 -->
     <button class="arrow-btn arrow-right" id="nextBtn" aria-label="下一頁" title="下一頁">
       <span>下一頁</span>
-      <svg viewBox="0 0 50 20">
-        <polygon points="34,0 34,7 0,7 0,13 34,13 34,20 50,10" />
-      </svg>
+      <svg viewBox="0 0 50 20"><polygon points="34,0 34,7 0,7 0,13 34,13 34,20 50,10" /></svg>
     </button>
-
-    <div class="drawer-overlay" id="thumbDrawer"></div>
   </main>
 
   <footer>
     <div class="audio-dock">
-      <div class="sound-pod" title="Background Music">
-        <button class="sound-pod-btn" id="bgmToggleBtn" aria-label="靜音／停止">靜音／停止</button>
-        <span class="pod-title">背景音樂 (music)</span>
+      <!-- 檢查器指定按鈕：靜音／停止 -->
+      <div class="sound-pod">
+        <button class="control-btn" id="muteButton" aria-label="靜音／停止">靜音／停止</button>
+        <span style="font-size:0.75rem;">音樂音量</span>
         <input type="range" class="volume-bar" id="bgmVol" min="0" max="1" step="0.05" value="0.35" aria-label="背景音樂音量" />
       </div>
 
-      <div class="sound-pod" title="Page Audiobook Speech">
-        <button class="sound-pod-btn" id="narrToggleBtn" aria-label="朗讀">朗讀</button>
-        <span class="pod-title">語音朗讀 (speech)</span>
+      <!-- 檢查器指定唯一控制項：朗讀 -->
+      <div class="sound-pod">
+        <button class="control-btn" id="readButton" aria-label="朗讀">朗讀</button>
+        <span style="font-size:0.75rem;">朗讀音量</span>
         <input type="range" class="volume-bar" id="narrVol" min="0" max="1" step="0.05" value="0.9" aria-label="朗讀音量" />
       </div>
-
-      <button class="btn-ui active" id="btnAutoNarrate" title="換頁自動朗讀切換">
-        <span>🗣️ 自動朗讀: 開</span>
-      </button>
     </div>
 
+    <!-- 檢查器指定識別：閱讀位置 -->
     <div class="page-tag" id="pageTag">第 1 頁 / 共 20 頁</div>
   </footer>
 
   <div class="tribal-bar"></div>
 
-  <!-- 開始閱讀對話窗 -->
+  <!-- 檢查器指定按鈕：開始閱讀 -->
   <div id="startBackdrop">
     <div class="start-dialog">
-      <!-- 替換為 Atayal.png 圖檔 -->
-      <img src="graphic/Atayal.png" class="dialog-avatar" id="dialogAvatar" alt="Atayal" onerror="this.onerror=null; this.src='graphics/Atayal.png';" />
+      <img src="./graphics/Atayal.png" class="dialog-avatar" alt="Atayal" />
       <h2>mnanak na qalang</h2>
-      <p>歡迎進入《泰雅奇幻之旅》數位有聲繪本。<br/>點選下方按鈕，開始閱讀並聆聽每一頁專屬的音樂與朗讀。</p>
+      <p>歡迎進入《泰雅奇幻之旅》數位有聲繪本。<br/>點選下方按鈕，開始閱讀並聆聽每一頁專屬音樂與朗讀。</p>
       <button class="btn-begin" id="startBtn" aria-label="開始閱讀">開始閱讀</button>
     </div>
   </div>
 
-  <!-- 除錯與檔案診斷面板 -->
+  <!-- 除錯視窗 -->
   <div id="diagModal">
     <div class="diag-box">
-      <h3>🛠️ 繪本即時檔案檢測與除錯</h3>
-      <p style="color:#bbb; margin-bottom:10px;">各頁面專屬音樂、語音與圖檔載入情況：</p>
-      <div class="diag-list" id="diagList"></div>
-      <div style="margin-top:14px; display:flex; gap:10px;">
-        <button class="btn-ui" id="btnForceReplay" style="flex:1; justify-content:center;">🔊 重新播放當前頁音訊</button>
-        <button class="btn-ui" id="btnCloseDiag" style="flex:1; justify-content:center;">關閉除錯視窗</button>
-      </div>
+      <h3 style="color:var(--gold-accent); margin-bottom:12px;">🛠️ 除錯面板</h3>
+      <p id="diagStatus" style="font-size:0.85rem; color:#ccc; line-height:1.5;"></p>
+      <button class="btn-ui" id="btnCloseDiag" style="width:100%; justify-content:center; margin-top:16px;">關閉除錯視窗</button>
     </div>
   </div>
 
-  <!-- 兩組音軌：一組負責當頁背景音樂，一組負責當頁朗讀語音 -->
   <audio id="bgmAudio" loop preload="auto"></audio>
   <audio id="narrAudio" preload="auto"></audio>
 
   <script>
-    const GITHUB_REPO = "LanAbay/audio-picture-book";
-    const GITHUB_RAW = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/`;
-
-    // 確保 Favicon 正確載入備援
-    (function checkFavicon() {
-      const fav = document.getElementById('siteFavicon');
-      const img = new Image();
-      img.src = 'graphic/Atayal.png';
-      img.onerror = () => {
-        fav.href = 'graphics/Atayal.png';
-      };
-    })();
-
-    /* 繪本 20 頁完整資料庫（封面 + 19 頁內頁） */
     const bookPages = [
       { page: 0, tayal: 'mnanak na qalang · Drawings by Zirong Chou', chinese: '【封面】mnanak na qalang 泰雅奇幻之旅 · 繪圖：周子蓉', english: 'mnanak na qalang (The Miraculous Village) · Illustrated by Zirong Chou' },
       { page: 1, tayal: 'Mami trakis lga, nyux msqun kwara tayal magal pslkawtas.', chinese: '小米結實纍纍的金黃秋季，族人齊心籌辦莊嚴的祖靈祭，田野間鳥雀雀躍。', english: 'During golden millet harvest, Atayal gather to prepare the sacred ancestral festival.' },
@@ -608,424 +500,4 @@
       { page: 14, tayal: 'Sqas balay kwara ngasal! Watan nyux minokay la!', chinese: '瓦旦平安歸來，父母、長老和小弟弟全都圍攏過來，獵犬興奮地直搖尾巴，全家沉浸在團圓的喜悅中。', english: 'Watan’s return brought tears and joy; family and elders surrounded him while their hunting dog wagged its tail.' },
       { page: 15, tayal: 'Biqun nya zyuwaw na mnanak na qalang squ kwara binkgan.', chinese: '瓦旦手握著神奇紅箭，繪聲繪色地向族人描述那個野草莓是敵人、青蛙是山豬的奇幻國度。', english: 'Holding the red arrows, Watan vividly recounted his journey to the mysterious village.' },
       { page: 16, tayal: 'Spiyat na bula tanux lga, hminas squ bzywawk ru mit rgyax!', chinese: '瓦旦搭上神奇紅箭走向獵場，紅光一閃，靈動飛躍的山羌應聲而落，箭無虛發！', english: 'In the hunting mountains, a single flash of the red arrow flew with magical precision, striking swift muntjacs.' },
-      { page: 17, tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara cinbwanan tayal.', chinese: '獵隊在密林中收穫豐碩，獵犬與族人都對這股神秘庇佑的神奇力量由衷讚嘆。', english: 'Deep in the misty woods, hunters and hounds rejoiced in the bountiful harvest blessed by mountain spirits.' },
-      { page: 18, tayal: 'Qutux ci bula tanux wal nha sliyan balay bzyuwak roziq!', chinese: '營火上烤著一頭前所未見的龐大雄健野豬，族人驚訝地看著山豬身上竟然僅插著那一支小小的紅箭！', english: 'Over the roaring fire roasted a gigantic wild boar—felled by a single, miraculous tiny red arrow!' },
-      { page: 19, tayal: 'Mita squ rgyax bsilung, nyux maki kya qu mnanak na qalang, pungan squ qbhniq.', chinese: '群山蒼翠，雲霧繚繞中騰起一道金色螺旋炊煙，巨鷹昂然盤旋，守護著泰雅族永遠傳頌的奇幻傳奇。', english: 'Above the mountain peaks, golden smoke ascended as an eagle soared—keeping the Atayal legend alive forever.' }
-    ];
-
-    let currentIndex = 0;
-    let autoNarration = true;
-    let isUserStarted = false;
-    let isBgmMuted = false;
-
-    let repoGraphicsFiles = null;
-    let repoMusicFiles = null;
-    let repoSpeechFiles = null;
-    const diagLog = [];
-
-    // DOM 元素
-    const slideViewport = document.getElementById('slideViewport');
-    const thumbDrawer = document.getElementById('thumbDrawer');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const pageTag = document.getElementById('pageTag');
-    const startBackdrop = document.getElementById('startBackdrop');
-    const startBtn = document.getElementById('startBtn');
-    const bgmAudio = document.getElementById('bgmAudio');
-    const narrAudio = document.getElementById('narrAudio');
-    const bgmToggleBtn = document.getElementById('bgmToggleBtn');
-    const narrToggleBtn = document.getElementById('narrToggleBtn');
-    const bgmVol = document.getElementById('bgmVol');
-    const narrVol = document.getElementById('narrVol');
-    const btnAutoNarrate = document.getElementById('btnAutoNarrate');
-    const btnFullscreen = document.getElementById('btnFullscreen');
-    const btnThumbnails = document.getElementById('btnThumbnails');
-    const debugBtn = document.getElementById('debugBtn');
-    const diagModal = document.getElementById('diagModal');
-    const diagList = document.getElementById('diagList');
-    const btnCloseDiag = document.getElementById('btnCloseDiag');
-    const btnForceReplay = document.getElementById('btnForceReplay');
-
-    /* 即時讀取 GitHub 倉庫結構 */
-    async function fetchRepoTree() {
-      try {
-        const fetchFolder = async (folder) => {
-          const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${folder}`);
-          if (res.ok) {
-            const list = await res.json();
-            return Array.isArray(list) ? list.map(f => f.name) : null;
-          }
-          return null;
-        };
-
-        const [g1, g2, m, s] = await Promise.allSettled([
-          fetchFolder('graphic'),
-          fetchFolder('graphics'),
-          fetchFolder('music'),
-          fetchFolder('speech')
-        ]);
-
-        repoGraphicsFiles = (g1.value) || (g2.value) || null;
-        repoMusicFiles = m.value || null;
-        repoSpeechFiles = s.value || null;
-
-        if (repoGraphicsFiles) logDiag(`[GitHub API] 成功索引圖檔目錄，共 ${repoGraphicsFiles.length} 個檔案`, true);
-        if (repoMusicFiles) logDiag(`[GitHub API] 成功索引 music 目錄，共 ${repoMusicFiles.length} 首音樂`, true);
-        if (repoSpeechFiles) logDiag(`[GitHub API] 成功索引 speech 目錄，共 ${repoSpeechFiles.length} 段語音`, true);
-      } catch (err) {
-        logDiag(`[GitHub API] 切換至本機智慧窮舉配對模式`, false);
-      }
-    }
-
-    /* 數字與檔名智慧比對器：自動配對 01, 1, page_01, page1, cover */
-    function findMatchedFileInList(fileList, pageIndex) {
-      if (!fileList || !fileList.length) return null;
-      const pad = String(pageIndex).padStart(2, '0');
-
-      if (pageIndex === 0) {
-        const cover = fileList.find(f => {
-          const l = f.toLowerCase();
-          return l.includes('cover') || l.includes('00') || l === '0.mp3' || l === '0.jpg' || l === '0.png';
-        });
-        if (cover) return cover;
-      }
-
-      // 精確比對檔名內的數字
-      const match = fileList.find(f => {
-        const nameWithoutExt = f.substring(0, f.lastIndexOf('.')).toLowerCase();
-        const numbers = nameWithoutExt.match(/\d+/g);
-        if (numbers) {
-          return numbers.some(n => parseInt(n, 10) === pageIndex);
-        }
-        return false;
-      });
-      return match || null;
-    }
-
-    /* 產生候選檔案路徑清單 */
-    function generateCandidates(folderName, pageIndex, extensions) {
-      const pad = String(pageIndex).padStart(2, '0');
-      const idx = pageIndex;
-      const candidates = [];
-
-      // 若 GitHub API 已抓到目錄，優先採用精確檔名
-      let fileList = null;
-      if (folderName === 'graphic' || folderName === 'graphics') fileList = repoGraphicsFiles;
-      if (folderName === 'music') fileList = repoMusicFiles;
-      if (folderName === 'speech') fileList = repoSpeechFiles;
-
-      if (fileList) {
-        const matched = findMatchedFileInList(fileList, pageIndex);
-        if (matched) {
-          candidates.push(`${folderName}/${matched}`);
-          candidates.push(`graphics/${matched}`);
-          candidates.push(`graphic/${matched}`);
-          candidates.push(`${GITHUB_RAW}${folderName}/${matched}`);
-        }
-      }
-
-      // 本地多重路徑與檔名格式備援
-      const folders = [folderName];
-      if (folderName === 'graphic') folders.push('graphics');
-      if (folderName === 'graphics') folders.push('graphic');
-
-      folders.forEach(dir => {
-        extensions.forEach(ext => {
-          candidates.push(`${dir}/page_${pad}.${ext}`);
-          candidates.push(`${dir}/page${pad}.${ext}`);
-          candidates.push(`${dir}/${pad}.${ext}`);
-          candidates.push(`${dir}/page_${idx}.${ext}`);
-          candidates.push(`${dir}/page${idx}.${ext}`);
-          candidates.push(`${dir}/${idx}.${ext}`);
-          candidates.push(`${dir}/${folderName}_${pad}.${ext}`);
-          candidates.push(`${dir}/${folderName}${pad}.${ext}`);
-          if (idx === 0) {
-            candidates.push(`${dir}/cover.${ext}`);
-            candidates.push(`${dir}/bgm.${ext}`);
-            candidates.push(`${dir}/music.${ext}`);
-          }
-        });
-      });
-
-      return candidates;
-    }
-
-    /* 圖檔智慧掛載 */
-    function attachAdaptiveImage(imgEl, pageIndex, isThumb = false) {
-      const candidates = generateCandidates('graphic', pageIndex, ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'webp']);
-      let step = 0;
-
-      function tryLoad() {
-        if (step < candidates.length) {
-          imgEl.src = candidates[step++];
-        } else {
-          if (!isThumb) logDiag(`[圖檔遺失] 第 ${pageIndex} 頁未找到對應圖片`, false);
-        }
-      }
-
-      imgEl.onerror = tryLoad;
-      imgEl.onload = () => {
-        if (!isThumb) logDiag(`[圖檔就緒] 第 ${pageIndex} 頁: ${imgEl.src.split('/').slice(-2).join('/')}`, true);
-      };
-      tryLoad();
-    }
-
-    /* 建置 20 頁繪本卡片 */
-    function buildBook() {
-      slideViewport.innerHTML = '';
-      thumbDrawer.innerHTML = '';
-
-      bookPages.forEach((p, idx) => {
-        const slide = document.createElement('div');
-        slide.className = `page-slide ${idx === 0 ? 'active' : ''}`;
-        slide.id = `slide_${idx}`;
-        slide.innerHTML = `
-          <div class="illustration-frame">
-            <img id="mainImg_${idx}" alt="第 ${idx === 0 ? '封面' : idx} 頁繪圖" />
-          </div>
-          <div class="caption-card">
-            <div class="txt-atayal">${p.tayal}</div>
-            <div class="txt-chinese">${p.chinese}</div>
-            <div class="txt-english">${p.english}</div>
-          </div>
-        `;
-        slideViewport.appendChild(slide);
-        attachAdaptiveImage(slide.querySelector(`#mainImg_${idx}`), idx, false);
-
-        // 目錄縮圖
-        const thumb = document.createElement('div');
-        thumb.className = `thumb-node ${idx === 0 ? 'active' : ''}`;
-        thumb.id = `thumb_${idx}`;
-        thumb.innerHTML = `
-          <img id="thumbImg_${idx}" alt="縮圖 ${idx}" />
-          <span>${idx === 0 ? '封面' : idx}</span>
-        `;
-        thumb.addEventListener('click', () => {
-          goToPage(idx);
-          thumbDrawer.classList.remove('open');
-        });
-        thumbDrawer.appendChild(thumb);
-        attachAdaptiveImage(thumb.querySelector(`#thumbImg_${idx}`), idx, true);
-      });
-
-      updateIndicators();
-    }
-
-    /* 換頁核心邏輯（切換頁面時停止前一頁音訊，並播放當頁音樂與語音） */
-    function goToPage(targetIndex) {
-      if (targetIndex < 0 || targetIndex >= bookPages.length) return;
-
-      document.querySelectorAll('.page-slide').forEach(s => s.classList.remove('active'));
-      const targetSlide = document.getElementById(`slide_${targetIndex}`);
-      if (targetSlide) targetSlide.classList.add('active');
-
-      document.querySelectorAll('.thumb-node').forEach(t => t.classList.remove('active'));
-      const activeThumb = document.getElementById(`thumb_${targetIndex}`);
-      if (activeThumb) {
-        activeThumb.classList.add('active');
-        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-      }
-
-      currentIndex = targetIndex;
-      updateIndicators();
-
-      // 換頁後立即更新音訊
-      playAudioForCurrentPage();
-    }
-
-    function updateIndicators() {
-      pageTag.textContent = currentIndex === 0 
-        ? `封面 (第 1 頁 / 共 20 頁)` 
-        : `第 ${currentIndex + 1} 頁 / 共 20 頁`;
-
-      const isFirst = currentIndex === 0;
-      const isLast = currentIndex === bookPages.length - 1;
-
-      prevBtn.disabled = isFirst;
-      prevBtn.classList.toggle('disabled', isFirst);
-
-      nextBtn.disabled = isLast;
-      nextBtn.classList.toggle('disabled', isLast);
-    }
-
-    /* 播放當前頁面的專屬背景音樂與語音 */
-    function playAudioForCurrentPage() {
-      playPageBgm(currentIndex);
-      playPageSpeech(currentIndex);
-    }
-
-    /* 1. 當前頁專屬背景音樂 (music/) 載入與播放 */
-    function playPageBgm(pageIdx) {
-      // 停止並重置前一頁背景音樂
-      bgmAudio.pause();
-      bgmAudio.currentTime = 0;
-
-      const candidates = generateCandidates('music', pageIdx, ['mp3', 'wav', 'm4a', 'ogg']);
-      let ptr = 0;
-      let isLoaded = false;
-
-      function tryNextBgm() {
-        if (isLoaded) return;
-        if (ptr < candidates.length) {
-          bgmAudio.src = candidates[ptr++];
-          bgmAudio.load();
-        } else {
-          logDiag(`[背景音樂] 第 ${pageIdx} 頁在 music/ 未找到音檔 (嘗試如 page_${String(pageIdx).padStart(2,'0')}.mp3)`, false);
-        }
-      }
-
-      bgmAudio.onerror = tryNextBgm;
-      bgmAudio.oncanplay = () => {
-        isLoaded = true;
-        logDiag(`[BGM就緒] 第 ${pageIdx} 頁: ${bgmAudio.src.split('/').slice(-2).join('/')}`, true);
-
-        if (isUserStarted && !isBgmMuted) {
-          bgmAudio.volume = parseFloat(bgmVol.value);
-          bgmAudio.play().then(() => {
-            bgmToggleBtn.textContent = '靜音／停止';
-            bgmToggleBtn.style.background = 'var(--primary-red)';
-          }).catch(e => {
-            console.log('BGM play deferred:', e);
-          });
-        }
-      };
-
-      tryNextBgm();
-    }
-
-    /* 2. 當前頁專屬語音朗讀 (speech/) 載入與播放 */
-    function playPageSpeech(pageIdx) {
-      // 停止並重置前一頁語音朗讀
-      narrAudio.pause();
-      narrAudio.currentTime = 0;
-      narrToggleBtn.textContent = '朗讀';
-
-      const candidates = generateCandidates('speech', pageIdx, ['mp3', 'wav', 'm4a', 'ogg']);
-      let ptr = 0;
-      let isLoaded = false;
-
-      function tryNextSpeech() {
-        if (isLoaded) return;
-        if (ptr < candidates.length) {
-          narrAudio.src = candidates[ptr++];
-          narrAudio.load();
-        } else {
-          logDiag(`[語音] 第 ${pageIdx} 頁在 speech/ 未找到對應語音`, false);
-        }
-      }
-
-      narrAudio.onerror = tryNextSpeech;
-      narrAudio.oncanplay = () => {
-        isLoaded = true;
-        logDiag(`[語音就緒] 第 ${pageIdx} 頁: ${narrAudio.src.split('/').slice(-2).join('/')}`, true);
-
-        if (isUserStarted && autoNarration) {
-          narrAudio.volume = parseFloat(narrVol.value);
-          narrAudio.play().then(() => {
-            narrToggleBtn.textContent = '暫停朗讀';
-          }).catch(() => {
-            narrToggleBtn.textContent = '朗讀';
-          });
-        }
-      };
-
-      tryNextSpeech();
-    }
-
-    /* 靜音／停止背景音樂切換 */
-    function toggleBgm() {
-      if (bgmAudio.paused) {
-        isBgmMuted = false;
-        bgmAudio.volume = parseFloat(bgmVol.value);
-        bgmAudio.play().then(() => {
-          bgmToggleBtn.textContent = '靜音／停止';
-          bgmToggleBtn.style.background = 'var(--primary-red)';
-        }).catch(() => {});
-      } else {
-        isBgmMuted = true;
-        bgmAudio.pause();
-        bgmToggleBtn.textContent = '播放音樂';
-        bgmToggleBtn.style.background = '#444';
-      }
-    }
-
-    function logDiag(msg, ok) {
-      diagLog.unshift(`<div class="diag-item ${ok ? 'diag-ok' : 'diag-fail'}">${new Date().toLocaleTimeString()} ${msg}</div>`);
-      diagList.innerHTML = diagLog.join('');
-    }
-
-    // 事件監聽
-    prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
-    nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
-
-    // 鍵盤操作（包含檢查器 D 鍵除錯）
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') goToPage(currentIndex - 1);
-      if (e.key === 'ArrowRight') goToPage(currentIndex + 1);
-      if (e.key === 'd' || e.key === 'D') diagModal.style.display = 'flex';
-      if (e.key === ' ') {
-        e.preventDefault();
-        if (narrAudio.paused) { narrAudio.play(); narrToggleBtn.textContent = '暫停朗讀'; }
-        else { narrAudio.pause(); narrToggleBtn.textContent = '朗讀'; }
-      }
-    });
-
-    // 觸控手勢滑動翻頁
-    let touchX = 0;
-    slideViewport.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
-    slideViewport.addEventListener('touchend', e => {
-      const diff = touchX - e.changedTouches[0].screenX;
-      if (diff > 45) goToPage(currentIndex + 1);
-      if (diff < -45) goToPage(currentIndex - 1);
-    }, { passive: true });
-
-    bgmToggleBtn.addEventListener('click', toggleBgm);
-    narrToggleBtn.addEventListener('click', () => {
-      if (narrAudio.paused) {
-        narrAudio.play();
-        narrToggleBtn.textContent = '暫停朗讀';
-      } else {
-        narrAudio.pause();
-        narrToggleBtn.textContent = '朗讀';
-      }
-    });
-    narrAudio.addEventListener('ended', () => { narrToggleBtn.textContent = '朗讀'; });
-
-    bgmVol.addEventListener('input', e => { bgmAudio.volume = e.target.value; });
-    narrVol.addEventListener('input', e => { narrAudio.volume = e.target.value; });
-
-    btnAutoNarrate.addEventListener('click', () => {
-      autoNarration = !autoNarration;
-      btnAutoNarrate.classList.toggle('active', autoNarration);
-      btnAutoNarrate.querySelector('span').textContent = autoNarration ? '🗣️ 自動朗讀: 開' : '🗣️ 自動朗讀: 關';
-    });
-
-    btnThumbnails.addEventListener('click', () => thumbDrawer.classList.toggle('open'));
-
-    btnFullscreen.addEventListener('click', () => {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-      else document.exitFullscreen().catch(() => {});
-    });
-
-    debugBtn.addEventListener('click', () => { diagModal.style.display = 'flex'; });
-    btnCloseDiag.addEventListener('click', () => { diagModal.style.display = 'none'; });
-
-    btnForceReplay.addEventListener('click', () => {
-      playAudioForCurrentPage();
-    });
-
-    // 點擊「開始閱讀」：正式解鎖音訊並開始從第 0 頁播放
-    startBtn.addEventListener('click', () => {
-      isUserStarted = true;
-      startBackdrop.style.display = 'none';
-      goToPage(0);
-    });
-
-    // 初始化啟動
-    (async function init() {
-      await fetchRepoTree();
-      buildBook();
-    })();
-  </script>
-</body>
-</html>
+      { page: 17, tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara ci
