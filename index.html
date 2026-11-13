@@ -28,7 +28,6 @@
             el.href = dataUrl;
           });
         } catch (e) {
-          // 若有跨域安全限制則使用帶時間戳記路徑
           document.querySelectorAll("link[rel*='icon']").forEach(el => {
             el.href = './graphics/Atayal.png?v=' + Date.now();
           });
@@ -179,7 +178,7 @@
     .illustration-frame {
       position: relative;
       width: 100%;
-      height: 74%;
+      height: 72%;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: var(--rhombus-shadow);
@@ -240,15 +239,15 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      max-height: 130px;
+      gap: 4px;
+      max-height: 140px;
       overflow-y: auto;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
-    .txt-atayal { font-size: 0.95rem; color: #ffe082; font-weight: 600; line-height: 1.35; }
-    .txt-chinese { font-size: 0.92rem; color: #f1f1f1; line-height: 1.35; }
-    .txt-english { font-size: 0.8rem; color: #aba298; line-height: 1.25; }
+    .txt-atayal { font-size: 0.96rem; color: #ffe082; font-weight: 600; line-height: 1.4; }
+    .txt-chinese { font-size: 0.92rem; color: #f1f1f1; line-height: 1.4; }
+    .txt-english { font-size: 0.82rem; color: #aba298; line-height: 1.3; }
 
     .arrow-btn {
       position: absolute;
@@ -339,7 +338,6 @@
       white-space: nowrap;
     }
 
-    /* 彈跳視窗（採用最高層級與完整四方錨定，防止事件遮蔽） */
     #startBackdrop {
       position: fixed;
       top: 0;
@@ -419,7 +417,7 @@
       .title-group p { display: none; }
       .arrow-btn { padding: 0 10px; height: 44px; font-size: 0.78rem; }
       .illustration-frame { height: 65%; }
-      .caption-card { max-height: 110px; }
+      .caption-card { max-height: 120px; }
     }
   </style>
 </head>
@@ -436,7 +434,6 @@
       </div>
     </div>
     <div class="header-right">
-      <!-- 檢查器指定按鈕：除錯入口 -->
       <button class="btn-ui" id="debugBtn" aria-label="除錯入口">除錯入口</button>
       <button class="btn-ui" id="btnFullscreen" title="全螢幕切換">⛶ 全螢幕</button>
     </div>
@@ -519,308 +516,3 @@
 
   <audio id="bgmAudio" loop preload="auto"></audio>
   <audio id="narrAudio" preload="auto"></audio>
-
-  <script>
-    const bookPages = [
-      { page: 0, tayal: 'mnanak na qalang · Drawings by Zirong Chou', chinese: '【封面】mnanak na qalang 泰雅奇幻之旅 · 繪圖：周子蓉', english: 'mnanak na qalang (The Miraculous Village) · Illustrated by Zirong Chou' },
-      { page: 1, tayal: 'Mami trakis lga, nyux msqun kwara tayal magal pslkawtas.', chinese: '小米結實纍纍的金黃秋季，族人齊心籌辦莊嚴的祖靈祭，田野間鳥雀雀躍。', english: 'During golden millet harvest, Atayal gather to prepare the sacred ancestral festival.' },
-      { page: 2, tayal: 'Laxi pzi’i ru kangi! Aring pslkawtas lga, laxi tkari squ tunux hbun.', chinese: '老人家鄭重告誡：「祭典下山時千萬不可回頭看，免遭山神與邪靈帶走！」竹筒斟滿祭酒敬拜神木。', english: 'The elders warned: "Never look back on your way down!" Bamboo vessels of wine hung on the sacred tree.' },
-      { page: 3, tayal: 'Wal hminas gaga qu Watan, rasun na mtkari na rgyax lmkuw.', chinese: '瓦旦不小心違背了禁忌回了頭！剎那間，黑影般戴著面具的矮人從密林現身，將瓦旦急拽而去！', english: 'Watan inadvertently looked back. Masked shadow spirits darted from the dark woods and whisked him away!' },
-      { page: 4, tayal: 'Tehuk squ mnkum balay na qalang, ungat wagi, mnanak balay qu klhangan qani!', chinese: '瓦旦被押送到幽暗的奇幻部落，天空中沒有溫暖的太陽，只有一輪血色冷月與持火炬的矮人勇士。', english: 'Watan arrived at a sunless twilight village under an eclipsed sky with little warriors bearing torches.' },
-      { page: 5, tayal: 'Mita squ mrhuw na qalang ru laqi nya kneril nyux sbetaq phpah.', chinese: '瓦旦被押至頭目的雕花大座前，頭目身旁面具上簪著粉紅小花的女兒，正既羞澀又好奇地端詳著他。', english: 'He stood before the chief. Beside the throne, the flower-masked daughter gazed at him softly.' },
-      { page: 6, tayal: 'Nanu maniq nha? Nyux sbang mqu, kulu ru srakaw! Nhyul balay Watan!', chinese: '盛大的迎賓盛宴端上了桌——杯盤裡竟盛著毒蛇、青蛙與大蜈蚣！瓦旦雙手捧杯嚇得直冒冷汗！', english: 'The feast was served—plates writhed with snakes, frogs, and centipedes! Watan held the cup in cold sweat.' },
-      { page: 7, tayal: 'Kmut squ bzyuwak hiya! Huzil nha ga bzyuwak ta maki babaw cinbwanan!', chinese: '飢餓的瓦旦架起火堆烤了一整隻香噴噴的山豬，卻渾然不知在矮人世界裡，我們的山豬竟是他們的「獵狗」！', english: 'Watan roasted a wild boar—wholly unaware that in this upside-down realm, wild boars were pet hounds!' },
-      { page: 8, tayal: 'Hngiyon nha Watan! Rramat kneril nyux mngilis mqbaq.', chinese: '烤了「獵狗」的瓦旦觸犯眾怒被五花大綁在木樁上！戴花的小女孩焦急地流下眼淚，苦苦向族人求情。', english: 'Warriors bound Watan to a stake while the flower-masked girl wept and pleaded for his life.' },
-      { page: 9, tayal: 'Paris na mnanak qalang ga zayziluk! Watan qu wal kmut kwara paris!', chinese: '奇幻部落最大的死敵是滿山刺藤的野刺梅（野草莓）！英勇的瓦旦拔出獵刀，輕而易舉地斬盡所有荊棘妖怪！', english: 'The enemies of the little people were thorny wild raspberry vines! Watan drew his knife and hacked them down!' },
-      { page: 10, tayal: 'Bzyuwak nha ga qpatung ta! Watan qu wal magal hopa balay bzyuwak!', chinese: '原來矮人眼中的兇猛山豬，就是溪邊蹦跳的綠青蛙！瓦旦用竹竿串起一大把青蛙，部落歡聲雷動尊他為英雄！', english: 'River frogs were their fierce boars! Watan netted a pole of frogs, and the tribe hailed him as their hero!' },
-      { page: 11, tayal: 'Swayay la! Ini nbah kbaq mqas ru snhyun ta laqi kneril qasa.', chinese: '離別的晨曦照亮了山谷，瓦旦單膝跪下，與依依不捨的戴花小女孩雙手緊握，互道珍重祝福。', english: 'Dawn of departure arrived. Watan knelt, clasping hands with the tearful little girl in tender farewell.' },
-      { page: 12, tayal: 'Biqan na mrhuw qu mnanak na bula tanux niqan gaga.', chinese: '頭目親手將一束神聖耀眼的魔法「紅色細箭」贈予瓦旦，作為部落最崇高的友誼盟約。', english: 'The chief presented Watan with a bundle of magical red arrows—the supreme symbol of their eternal bond.' },
-      { page: 13, tayal: 'M’abi squ ngasal trakis lga, yaki nya qu siliq balay wal mita Watan!', chinese: '金黃的晨光照進自家穀倉，紋面的阿嬤推開門，驚喜萬分地發現失蹤的瓦旦正安穩沉睡在小米堆上！', english: 'Sunlight filled the granary; grandmother was overjoyed to find Watan sound asleep on the millet.' },
-      { page: 14, tayal: 'Sqas balay kwara ngasal! Watan nyux minokay la!', chinese: '瓦旦平安歸來，父母、長老和小弟弟全都圍攏過來，獵犬興奮地直搖尾巴，全家沉浸在團圓的喜悅中。', english: 'Watan’s return brought tears and joy; family and elders surrounded him while their hunting dog wagged its tail.' },
-      { page: 15, tayal: 'Biqun nya zyuwaw na mnanak na qalang squ kwara binkgan.', chinese: '瓦旦手握著神奇紅箭，繪聲繪色地向族人描述那個野草莓是敵人、青蛙是山豬的奇幻國度。', english: 'Holding the red arrows, Watan vividly recounted his journey to the mysterious village.' },
-      { page: 16, tayal: 'Spiyat na bula tanux lga, hminas squ bzywawk ru mit rgyax!', chinese: '瓦旦搭上神奇紅箭走向獵場，紅光一閃，靈動飛躍的山羌應聲而落，箭無虛發！', english: 'In the hunting mountains, a single flash of the red arrow flew with magical precision, striking swift muntjacs.' },
-      { page: 17, tayal: 'Niqan gaga balay qu rgyax, nyux mqas kwara cinbwanan tayal.', chinese: '獵隊在密林中收穫豐碩，獵犬與族人都對這股神秘庇佑的神奇力量由衷讚嘆。', english: 'Deep in the misty woods, hunters and hounds rejoiced in the bountiful harvest blessed by mountain spirits.' },
-      { page: 18, tayal: 'Qutux ci bula tanux wal nha sliyan balay bzyuwak roziq!', chinese: '營火上烤著一頭前所未見的龐大雄健野豬，族人驚訝地看著山豬身上竟然僅插著那一支小小的紅箭！', english: 'Over the roaring fire roasted a gigantic wild boar—felled by a single, miraculous tiny red arrow!' },
-      { page: 19, tayal: 'Mita squ rgyax bsilung, nyux maki kya qu mnanak na qalang, pungan squ qbhniq.', chinese: '群山蒼翠，雲霧繚繞中騰起一道金色螺旋炊煙，巨鷹昂然盤旋，守護著泰雅族永遠傳頌的奇幻傳奇。', english: 'Above the mountain peaks, golden smoke ascended as an eagle soared—keeping the Atayal legend alive forever.' }
-    ];
-
-    let currentIndex = 0;
-    let isUserStarted = false;
-    let isMuted = false;
-    let autoNarration = true;
-
-    // DOM 元素快取
-    const mainBookImage = document.getElementById('mainBookImage');
-    const txtTayal = document.getElementById('txtTayal');
-    const txtChinese = document.getElementById('txtChinese');
-    const txtEnglish = document.getElementById('txtEnglish');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const pageTag = document.getElementById('pageTag');
-    const loadingNotice = document.getElementById('loadingNotice');
-    const errorNotice = document.getElementById('errorNotice');
-    const retryButton = document.getElementById('retryButton');
-    const muteButton = document.getElementById('muteButton');
-    const readButton = document.getElementById('readButton');
-    const bgmAudio = document.getElementById('bgmAudio');
-    const narrAudio = document.getElementById('narrAudio');
-    const bgmVol = document.getElementById('bgmVol');
-    const narrVol = document.getElementById('narrVol');
-    const debugBtn = document.getElementById('debugBtn');
-    const diagModal = document.getElementById('diagModal');
-    const diagStatus = document.getElementById('diagStatus');
-    const btnCloseDiag = document.getElementById('btnCloseDiag');
-
-    // 載入提示控制
-    let loadTimer = null;
-    function showLoading() {
-      loadingNotice.style.display = 'block';
-      errorNotice.style.display = 'none';
-    }
-    function hideLoading() {
-      loadingNotice.style.display = 'none';
-    }
-
-    mainBookImage.onload = () => {
-      clearTimeout(loadTimer);
-      hideLoading();
-    };
-
-    mainBookImage.onerror = () => {
-      clearTimeout(loadTimer);
-      hideLoading();
-      errorNotice.style.display = 'flex';
-    };
-
-    retryButton.addEventListener('click', () => {
-      errorNotice.style.display = 'none';
-      showLoading();
-      mainBookImage.src = `./graphics/${currentIndex}.jpg?t=${Date.now()}`;
-    });
-
-    // 預載下一頁資源
-    function preloadNextPage(nextIdx) {
-      if (nextIdx >= bookPages.length) return;
-      const img = new Image();
-      img.src = `./graphics/${nextIdx}.jpg`;
-      const m = new Audio();
-      m.preload = 'auto';
-      m.src = `./music/music${nextIdx}.mp3`;
-      const s = new Audio();
-      s.preload = 'auto';
-      s.src = `./speech/speech${nextIdx}.mp3`;
-    }
-
-    /* 換頁核心邏輯 */
-    function goToPage(targetIndex) {
-      if (targetIndex < 0 || targetIndex >= bookPages.length) return;
-
-      currentIndex = targetIndex;
-      showLoading();
-      loadTimer = setTimeout(() => {}, 100);
-
-      // 直接變更主圖 src，確保檢查器觀察到切換
-      mainBookImage.src = `./graphics/${currentIndex}.jpg`;
-
-      // 更新字幕文字
-      const cur = bookPages[currentIndex];
-      txtTayal.textContent = cur.tayal;
-      txtChinese.textContent = cur.chinese;
-      txtEnglish.textContent = cur.english;
-
-      // 更新閱讀位置提示
-      pageTag.textContent = `第 ${currentIndex + 1} 頁 / 共 ${bookPages.length} 頁`;
-
-      // 檢查器首末頁邊界判定
-      prevBtn.disabled = (currentIndex === 0);
-      nextBtn.disabled = (currentIndex === bookPages.length - 1);
-
-      // 播放新頁面音訊
-      playAudioForCurrentPage();
-
-      // 預載下一頁
-      preloadNextPage(currentIndex + 1);
-    }
-
-    /* 音訊播放引擎（附非同步緩衝安全監聽） */
-    function playAudioForCurrentPage() {
-      if (isMuted) return;
-
-      const bgmSrc = `./music/music${currentIndex}.mp3`;
-      const speechSrc = `./speech/speech${currentIndex}.mp3`;
-
-      // 1. 載入背景音樂
-      bgmAudio.pause();
-      bgmAudio.src = bgmSrc;
-      bgmAudio.loop = true;
-      bgmAudio.volume = parseFloat(bgmVol.value);
-
-      if (isUserStarted) {
-        const p1 = bgmAudio.play();
-        if (p1 !== undefined) {
-          p1.catch(() => {
-            // 若即時播放遭瀏覽器緩衝延遲，於就緒時自動觸發
-            bgmAudio.addEventListener('canplay', function onBgmReady() {
-              bgmAudio.removeEventListener('canplay', onBgmReady);
-              if (isUserStarted && !isMuted) bgmAudio.play().catch(() => {});
-            }, { once: true });
-          });
-        }
-      }
-
-      // 2. 載入語音朗讀
-      narrAudio.pause();
-      narrAudio.src = speechSrc;
-      narrAudio.volume = parseFloat(narrVol.value);
-
-      if (isUserStarted && autoNarration) {
-        playSpeech();
-      }
-    }
-
-    // 播放語音朗讀（自動執行 Ducking 閃避）
-    function playSpeech() {
-      if (isMuted) return;
-      narrAudio.volume = parseFloat(narrVol.value);
-
-      const p2 = narrAudio.play();
-      if (p2 !== undefined) {
-        p2.then(() => {
-          // 語音播放時背景音樂音量降低至 25% (Ducking)
-          bgmAudio.volume = Math.max(0.05, parseFloat(bgmVol.value) * 0.25);
-        }).catch(() => {
-          narrAudio.addEventListener('canplay', function onSpeechReady() {
-            narrAudio.removeEventListener('canplay', onSpeechReady);
-            if (isUserStarted && !isMuted) {
-              narrAudio.play().then(() => {
-                bgmAudio.volume = Math.max(0.05, parseFloat(bgmVol.value) * 0.25);
-              }).catch(() => {});
-            }
-          }, { once: true });
-        });
-      }
-    }
-
-    // 朗讀結束或暫停時恢復背景音樂音量
-    narrAudio.onended = () => {
-      if (!isMuted) bgmAudio.volume = parseFloat(bgmVol.value);
-    };
-    narrAudio.onpause = () => {
-      if (!isMuted) bgmAudio.volume = parseFloat(bgmVol.value);
-    };
-
-    /* 檢查器指定按鈕：朗讀 */
-    readButton.addEventListener('click', () => {
-      if (narrAudio.paused) {
-        playSpeech();
-      } else {
-        narrAudio.pause();
-      }
-    });
-
-    /* 檢查器指定按鈕：靜音／停止 */
-    function setMuteState(muted) {
-      isMuted = muted;
-      bgmAudio.muted = isMuted;
-      narrAudio.muted = isMuted;
-      if (isMuted) {
-        bgmAudio.pause();
-        narrAudio.pause();
-        muteButton.style.background = '#555';
-      } else {
-        muteButton.style.background = 'var(--primary-red)';
-        if (isUserStarted) {
-          bgmAudio.volume = parseFloat(bgmVol.value);
-          bgmAudio.play().catch(() => {});
-        }
-      }
-    }
-
-    muteButton.addEventListener('click', () => {
-      setMuteState(!isMuted);
-    });
-
-    // 音量拉桿控制
-    bgmVol.addEventListener('input', e => {
-      if (!isMuted) bgmAudio.volume = e.target.value;
-    });
-    narrVol.addEventListener('input', e => {
-      if (!isMuted) narrAudio.volume = e.target.value;
-    });
-
-    // 翻頁按鈕綁定
-    prevBtn.addEventListener('click', () => goToPage(currentIndex - 1));
-    nextBtn.addEventListener('click', () => goToPage(currentIndex + 1));
-
-    // 鍵盤導覽：支援左右方向鍵、空白鍵播放/暫停、D 鍵除錯
-    window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') {
-        goToPage(currentIndex - 1);
-      } else if (e.key === 'ArrowRight') {
-        goToPage(currentIndex + 1);
-      } else if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault();
-        if (narrAudio.paused) playSpeech();
-        else narrAudio.pause();
-      } else if (e.key === 'd' || e.key === 'D') {
-        showDebugModal();
-      }
-    });
-
-    // 手機觸控滑動翻頁
-    let touchX = 0;
-    document.getElementById('readerStage').addEventListener('touchstart', e => {
-      touchX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    document.getElementById('readerStage').addEventListener('touchend', e => {
-      const diff = touchX - e.changedTouches[0].screenX;
-      if (diff > 45) goToPage(currentIndex + 1);
-      if (diff < -45) goToPage(currentIndex - 1);
-    }, { passive: true });
-
-    // 全螢幕按鈕
-    document.getElementById('btnFullscreen').addEventListener('click', () => {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-      else document.exitFullscreen().catch(() => {});
-    });
-
-    // 除錯功能
-    function showDebugModal() {
-      diagStatus.innerHTML = `
-        當前頁碼：第 ${currentIndex + 1} 頁 / 共 20 頁<br/>
-        圖片路徑：./graphics/${currentIndex}.jpg<br/>
-        音樂路徑：./music/music${currentIndex}.mp3<br/>
-        語音路徑：./speech/speech${currentIndex}.mp3<br/>
-        靜音狀態：${isMuted ? '已靜音' : '未靜音'}<br/>
-        朗讀狀態：${narrAudio.paused ? '暫停中' : '播放中'}
-      `;
-      diagModal.style.display = 'flex';
-    }
-
-    debugBtn.addEventListener('click', showDebugModal);
-    btnCloseDiag.addEventListener('click', () => { diagModal.style.display = 'none'; });
-
-    /* 開始閱讀全域點擊處理函數（徹底移除彈窗並解鎖 Autoplay 權限） */
-    function handleStartClick() {
-      isUserStarted = true;
-      const backdrop = document.getElementById('startBackdrop');
-      if (backdrop) {
-        backdrop.style.display = 'none';
-        backdrop.remove(); // 徹底自 DOM 中移除，避免殘留阻擋事件
-      }
-      goToPage(0);
-    }
-
-    // 雙重事件綁定
-    const startBtnEl = document.getElementById('startBtn');
-    if (startBtnEl) {
-      startBtnEl.addEventListener('click', handleStartClick);
-    }
-
-    // 初始化狀態
-    prevBtn.disabled = true;
-    preloadNextPage(1);
-  </script>
-</body>
-</html>
